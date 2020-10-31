@@ -19,6 +19,8 @@ module.exports = {
     '@typescript-eslint',
   ],
   'rules': {
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars-experimental": "error",
     '@typescript-eslint/explicit-module-boundary-types': 0,
     'react/prop-types': 0,
     'semi': 'warn',
@@ -174,6 +176,8 @@ module.exports = {
         'afterColon': true,
       },
     ],
+    'linebreak-style': 0,
+    'import/prefer-default-export': 0,
     'import/order': [
       'warn',
       {
