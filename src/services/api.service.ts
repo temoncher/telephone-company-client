@@ -18,5 +18,3 @@ export class ApiService {
 
   sendRequest = <T>(request: AxiosRequestConfig) => this.axios.request<T>(request);
 }
-
-export default new ApiService();

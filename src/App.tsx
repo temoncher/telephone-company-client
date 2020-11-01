@@ -1,26 +1,25 @@
 import * as React from 'react';
 
-import { useQuery } from 'react-query';
+import { Container } from '@material-ui/core';
+import { BrowserRouter, Route } from 'react-router-dom';
 
-import ApiServiceContext from './contexts/api-service.context';
+import Database from './views/Database';
+import Lab from './views/Lab';
 
-const App: React.FC = () => {
-  const apiService = React.useContext(ApiServiceContext);
-  const { data } = useQuery('databases', apiService.databaseApi.getDatabases);
-
-  const renderDatabases = () => {
-    if (!data) return <></>;
-
-    const databases = data.data;
-
-    return databases.map(({ name }) => <div key={name}>{ name }</div>);
-  };
-
-  return (
-    <div className="App">
-      { data ? renderDatabases() : 'Wait for it...'}
-    </div>
-  );
-};
+const App: React.FC = () => (
+  <Container fixed>
+    <BrowserRouter>
+      <Route
+        exact
+        path="/"
+        component={Database}
+      />
+      <Route
+        path="/lab"
+        component={Lab}
+      />
+    </BrowserRouter>
+  </Container>
+);
 
 export default App;
