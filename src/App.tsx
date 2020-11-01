@@ -1,14 +1,13 @@
 import * as React from 'react';
 
-import { Container } from '@material-ui/core';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import Database from './views/Database';
-import Lab from './views/Lab';
+import Lab from './views/Lab/index';
 
 const App: React.FC = () => (
-  <Container fixed>
-    <BrowserRouter>
+  <BrowserRouter>
+    <Switch>
       <Route
         exact
         path="/"
@@ -18,8 +17,8 @@ const App: React.FC = () => (
         path="/lab"
         component={Lab}
       />
-    </BrowserRouter>
-  </Container>
+    </Switch>
+  </BrowserRouter>
 );
 
 export default App;
