@@ -22,6 +22,7 @@ import {
   createRolesSQL,
   createAccountTriggerSQL,
   updateBalanceTriggerSQL,
+  createTransactionAfterCallTriggerSQL,
   seedDatabaseSQL,
 } from '../constants/sql/databases-sql';
 import ApiServiceContext from '../contexts/api-service.context';
@@ -37,6 +38,7 @@ const useStyles = makeStyles(() =>
     codeBlock: {
       overflow: 'auto',
       maxHeight: '50vh',
+      maxWidth: '100%',
     },
     schema: {
       width: '100%',
@@ -198,6 +200,19 @@ const Database: React.FC = () => {
       >
         <CodeBlock
           text={updateBalanceTriggerSQL}
+          language="sql"
+          theme={dracula}
+        />
+      </Grid>
+      <Grid item>
+        <Typography variant="body1">Set up transaction creation trigger after inserting a call</Typography>
+      </Grid>
+      <Grid
+        className={classes.codeBlock}
+        item
+      >
+        <CodeBlock
+          text={createTransactionAfterCallTriggerSQL}
           language="sql"
           theme={dracula}
         />

@@ -171,7 +171,11 @@ const Lab: React.FC = () => {
           <Divider />
           <ListItem
             button
-            onClick={() => history.push('/')}
+            onClick={() => {
+              apiService.setRole(Role.SUPER);
+
+              history.push('/');
+            }}
           >
             <ListItemText
               primary="Logout"

@@ -3,12 +3,9 @@ USE [master];
 
 -- Drop database if it is already present
 IF EXISTS(
-  SELECT
-  *
-FROM
-  [sys].[databases]
-WHERE
-    [name] = 'telephone_company'
+  SELECT *
+  FROM [sys].[databases]
+  WHERE [name] = 'telephone_company'
 ) BEGIN
   DROP DATABASE [telephone_company]
 END
@@ -44,7 +41,7 @@ CREATE TABLE [accounts]
 (
   [account_id] INT IDENTITY(1, 1) PRIMARY KEY,
   [subscriber_id] INT NOT NULL,
-  [balance] INT DEFAULT 0,
+  [balance] DOUBLE PRECISION DEFAULT 0,
   FOREIGN KEY(subscriber_id) REFERENCES [subscribers](subscriber_id) ON DELETE CASCADE
 );
 
@@ -63,7 +60,7 @@ CREATE TABLE [transactions]
   [transaction_id] INT IDENTITY(1, 1) PRIMARY KEY,
   [transaction_type_id] INT NOT NULL,
   [account_id] INT NOT NULL,
-  [amount] INT NOT NULL,
+  [amount] DOUBLE PRECISION NOT NULL,
   [timestamp] DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY(transaction_type_id) REFERENCES [transaction_types](transaction_type_id) ON DELETE CASCADE,
   FOREIGN KEY(account_id) REFERENCES [accounts](account_id) ON DELETE CASCADE
@@ -101,7 +98,7 @@ CREATE TABLE [daytime_prices]
 (
   [price_id] INT NOT NULL,
   [daytime_id] INT NOT NULL,
-  [price_per_minute] INT NOT NULL,
+  [price_per_minute] FLOAT NOT NULL,
   PRIMARY KEY(price_id, daytime_id),
   FOREIGN KEY(price_id) REFERENCES [prices](price_id) ON DELETE CASCADE,
   FOREIGN KEY(daytime_id) REFERENCES [daytimes](daytime_id) ON DELETE CASCADE
@@ -120,9 +117,7 @@ CREATE TABLE [calls]
   FOREIGN KEY(subscriber_id) REFERENCES [subscribers](subscriber_id) ON DELETE CASCADE,
   FOREIGN KEY(daytime_id) REFERENCES [daytimes](daytime_id) ON DELETE SET NULL,
   FOREIGN KEY(locality_id) REFERENCES [localities](locality_id) ON DELETE SET NULL,
-);
-
-`;
+);`;
 export const createRolesSQL = `USE [telephone_company];
 
 CREATE ROLE [dbAdminRole];
@@ -198,6 +193,68 @@ INSERT
   )
 END;
 `;
+export const createTransactionAfterCallTriggerSQL = `-- Add account for each new subscriber
+CREATE TRIGGER [TR_calls_AfterInsert] ON [calls]
+AFTER
+INSERT
+  AS BEGIN
+  SET NOCOUNT ON
+
+  DECLARE @insertedWithAccountId TABLE(
+    [locality_id] INT NOT NULL,
+    [daytime_id] INT NOT NULL,
+    [duration] INT NOT NULL,
+    [account_id] INT NOT NULL
+  );
+
+  DECLARE @insertedWithTransactionTypeId TABLE(
+    [locality_id] INT NOT NULL,
+    [daytime_id] INT NOT NULL,
+    [duration] INT NOT NULL,
+    [account_id] INT NOT NULL,
+    [transaction_type_id] INT NOT NULL
+  );
+
+  DECLARE @insertedWithPriceId TABLE(
+    [daytime_id] INT NOT NULL,
+    [duration] INT NOT NULL,
+    [account_id] INT NOT NULL,
+    [transaction_type_id] INT NOT NULL,
+    [price_id] INT NOT NULL
+  );
+
+  DECLARE @insertedWithAmount TABLE(
+    [account_id] INT NOT NULL,
+    [transaction_type_id] INT NOT NULL,
+    [amount] DOUBLE PRECISION NOT NULL
+  );
+
+  INSERT INTO @insertedWithAccountId
+  SELECT [locality_id], [daytime_id], [duration], [account_id]
+  FROM [INSERTED]
+    JOIN [accounts] ON [INSERTED].[subscriber_id] = [accounts].[subscriber_id]
+
+  INSERT INTO @insertedWithTransactionTypeId
+  SELECT [locality_id], [daytime_id], [duration], [account_id], [transaction_type_id]
+  FROM @insertedWithAccountId
+    JOIN [transaction_types] ON [transaction_types].[title] = 'LOSS'
+
+  INSERT INTO @insertedWithPriceId
+  SELECT [daytime_id], [duration], [account_id], [transaction_type_id], [price_id]
+  FROM @insertedWithTransactionTypeId
+    JOIN [prices] ON [prices].[locality_id] = [@insertedWithTransactionTypeId].[locality_id]
+
+  INSERT INTO @insertedWithAmount
+  SELECT [account_id], [transaction_type_id], [amount] = CAST([duration] AS FLOAT) / 60 * [price_per_minute]
+  FROM @insertedWithPriceId
+    JOIN [daytime_prices] ON [daytime_prices].[price_id] = [@insertedWithPriceId].[price_id] AND [daytime_prices].[daytime_id] = [@insertedWithPriceId].[daytime_id]
+
+  INSERT INTO [transactions]
+    ([account_id], [transaction_type_id], [amount])
+  SELECT [account_id], [transaction_type_id], [amount]
+  FROM @insertedWithAmount
+END;
+`;
 export const seedDatabaseSQL = `USE [telephone_company]
 
 -- Seed Organisations table
@@ -260,22 +317,23 @@ VALUES
 INSERT INTO
   [transactions]
   (
-  [transaction_type_id],
-  [account_id],
-  [amount]
+    [transaction_type_id],
+    [account_id],
+    [amount],
+    [timestamp]
   )
 VALUES
-  (1, 1, 100),
-  (1, 1, 100),
-  (1, 1, 200),
-  (2, 1, 100),
-  (2, 3, 100),
-  (2, 3, 400),
-  (1, 4, 1500),
-  (1, 2, 10),
-  (2, 2, 300),
-  (2, 2, 500),
-  (1, 2, 815);
+  (1, 1, 100, '2020-04-20 13:10:02.047'),
+  (1, 1, 100, '2020-05-22 12:11:02.047'),
+  (1, 1, 200, '2020-04-23 23:00:02.047'),
+  (1, 1, 100, '2020-05-23 23:40:02.047'),
+  (1, 3, 100, '2020-05-13 23:40:02.047'),
+  (1, 3, 400, '2020-05-13 23:43:02.047'),
+  (1, 4, 1500, '2019-11-25 15:10:02.047'),
+  (1, 2, 10, '2019-08-21 02:11:02.047'),
+  (1, 2, 300, '2019-06-25 20:00:02.047'),
+  (1, 2, 500, '2019-05-21 23:10:02.047'),
+  (1, 2, 815, '2018-04-23 23:10:02.047');
 
 
 -- Seed Daytimes table
@@ -339,28 +397,29 @@ VALUES
 INSERT INTO
   [calls]
   (
-  [subscriber_id],
-  [locality_id],
-  [duration],
-  [timestamp]
+    [subscriber_id],
+    [locality_id],
+    [duration],
+    [daytime_id],
+    [timestamp]
   )
 VALUES
-  (1, 1, 60, '2020-04-30 13:10:02.047'),
-  (1, 1, 33, '2020-04-30 12:11:02.047'),
-  (1, 1, 245, '2020-04-23 23:00:02.047'),
-  (1, 2, 123, '2020-05-23 23:40:02.047'),
-  (1, 1, 22, '2020-05-13 23:40:02.047'),
-  (1, 1, 12, '2020-05-13 23:43:02.047'),
-  (2, 2, 11, '2019-11-30 15:10:02.047'),
-  (2, 2, 123, '2019-08-30 02:11:02.047'),
-  (2, 2, 54, '2019-06-23 20:00:02.047'),
-  (2, 2, 64, '2019-06-23 23:10:02.047'),
-  (2, 2, 23, '2019-06-13 23:30:02.047'),
-  (2, 2, 12, '2019-06-13 22:43:02.047'),
-  (3, 2, 11, '2018-12-30 14:15:02.047'),
-  (3, 2, 123, '2018-11-30 01:31:02.047'),
-  (3, 2, 54, '2018-11-23 21:21:02.047'),
-  (3, 2, 64, '2018-11-23 23:10:02.047');
+  (1, 1, 60, 1, '2020-04-30 13:10:02.047'),
+  (1, 1, 33, 2, '2020-04-30 12:11:02.047'),
+  (1, 1, 245, 1, '2020-04-23 23:00:02.047'),
+  (1, 2, 123, 3, '2020-05-23 23:40:02.047'),
+  (1, 1, 22, 4, '2020-05-13 23:40:02.047'),
+  (1, 1, 12, 1, '2020-05-13 23:43:02.047'),
+  (2, 2, 11, 1, '2019-11-30 15:10:02.047'),
+  (2, 2, 123, 2, '2019-08-30 02:11:02.047'),
+  (2, 2, 54, 3, '2019-06-23 20:00:02.047'),
+  (2, 2, 64, 4, '2019-06-23 23:10:02.047'),
+  (2, 2, 23, 1, '2019-06-13 23:30:02.047'),
+  (2, 2, 12, 2, '2019-06-13 22:43:02.047'),
+  (3, 2, 11, 4, '2018-12-30 14:15:02.047'),
+  (3, 2, 123, 4, '2018-11-30 01:31:02.047'),
+  (3, 2, 54, 2, '2018-11-23 21:21:02.047'),
+  (3, 2, 64, 3, '2018-11-23 23:10:02.047');
 `;
 export const getAllDatabasesSQL = `SELECT name
 FROM sys.databases
