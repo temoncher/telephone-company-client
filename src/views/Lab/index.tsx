@@ -5,11 +5,13 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemIcon,
   ListItemSecondaryAction,
   makeStyles,
   IconButton,
   Divider,
 } from '@material-ui/core';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import CachedIcon from '@material-ui/icons/Cached';
 import {
   Route,
@@ -24,6 +26,7 @@ import { Role } from '@/enums/role.enum';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
+import Calls from './Calls';
 import DaytimePrices from './DaytimePrices';
 import Daytimes from './Daytimes';
 import Localities from './Localities';
@@ -32,7 +35,6 @@ import Prices from './Prices';
 import Subscribers from './Subscribers';
 import TransactionTypes from './TransactionTypes';
 import Transactions from './Transactions';
-import Calls from './Calls';
 
 interface MenuItem {
   url: string;
@@ -140,7 +142,7 @@ const Lab: React.FC = () => {
         anchor="left"
       >
         <List>
-          <ListItem button >
+          <ListItem>
             <ListItemText primary={`You are: ${role}`} />
             <ListItemSecondaryAction>
               <IconButton
@@ -166,6 +168,15 @@ const Lab: React.FC = () => {
               />
             </ListItem>
           ))}
+          <Divider />
+          <ListItem
+            button
+            onClick={() => history.push('/')}
+          >
+            <ListItemText
+              primary="Logout"
+            />
+          </ListItem>
         </List>
       </Drawer>
       <main className={classes.content}>
