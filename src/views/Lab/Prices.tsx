@@ -72,6 +72,8 @@ const Prices: React.FC = () => {
 
     await apiService.priceApi.deletePrice(selectedRow?.price_id);
 
+    setSelectedRow(null);
+
     await refetchPrices();
   };
 

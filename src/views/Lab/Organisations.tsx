@@ -64,6 +64,8 @@ const Organisations: React.FC = () => {
 
     await apiService.organisationApi.deleteOrganisation(selectedRow?.organisation_id);
 
+    setSelectedRow(null);
+
     await refetchOrganisations();
   };
 

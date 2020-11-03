@@ -81,6 +81,8 @@ const Subscribers: React.FC = () => {
 
     await apiService.subscriberApi.deleteSubscriber(selectedRow?.subscriber_id);
 
+    setSelectedRow(null);
+
     await refetchSubscribers();
   };
 
