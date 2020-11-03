@@ -55,13 +55,13 @@ const Prices: React.FC = () => {
     reset({ ...fieldsToReset });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (data: IPrice) => {
+  const handleSubmitClick = async (formData: IPrice) => {
     if (selectedRow) {
-      await apiService.priceApi.updatePrice(selectedRow.price_id, data);
+      await apiService.priceApi.updatePrice(selectedRow.price_id, formData);
 
       setSelectedRow(null);
     } else {
-      await apiService.priceApi.createPrice(data);
+      await apiService.priceApi.createPrice(formData);
     }
 
     await refetchPrices();
@@ -134,7 +134,6 @@ const Prices: React.FC = () => {
                   inputProps={{
                     name: 'locality_id',
                   }}
-                  id="demo-simple-select-outlined"
                   label="Locality"
                   error={Boolean(errors.locality_id)}
                 >

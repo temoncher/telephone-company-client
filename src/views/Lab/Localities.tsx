@@ -47,13 +47,13 @@ const Localitys: React.FC = () => {
     reset({ ...fieldsToReset });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (data: ILocality) => {
+  const handleSubmitClick = async (formData: ILocality) => {
     if (selectedRow) {
-      await apiService.localityApi.updateLocality(selectedRow.locality_id, data);
+      await apiService.localityApi.updateLocality(selectedRow.locality_id, formData);
 
       setSelectedRow(null);
     } else {
-      await apiService.localityApi.createLocality(data);
+      await apiService.localityApi.createLocality(formData);
     }
 
     await refetchLocalitys();

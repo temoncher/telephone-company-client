@@ -20,36 +20,45 @@ const App: React.FC = () => {
   const [isSnackbarOpen, setIsSnackbarOpen] = React.useState(false);
   const [message, setMessage] = React.useState('');
 
-  React.useEffect(() => {
-    window.addEventListener('unhandledrejection', event => {
-      if (event.reason.isAxiosError) {
-        const axiosError = event.reason as AxiosError<string | SqlError>;
+  const handleRejection = (event: PromiseRejectionEvent) => {
+    if (event.reason.isAxiosError) {
+      const axiosError = event.reason as AxiosError<string | SqlError>;
 
-        if (!axiosError.response) return;
+      if (!axiosError.response) return;
 
-        const { data } = axiosError.response;
+      const { data } = axiosError.response;
 
-        if (typeof data === 'string') {
-          if (data.includes('permission was denied')) {
-            setMessage('Permission denied');
-            setIsSnackbarOpen(true);
-
-            return;
-          }
-
-          return;
-        }
-
-        if (Object.keys(data.errors).length) {
-          const [, [firstError]] = Object.entries(data.errors)[0];
-
-          setMessage(firstError);
+      if (typeof data === 'string') {
+        if (data.includes('permission was denied')) {
+          setMessage('Permission denied');
           setIsSnackbarOpen(true);
 
           return;
         }
+
+        if (data.includes('Violation of PRIMARY KEY constraint')) {
+          setMessage('Violation of PRIMARY KEY constraint');
+          setIsSnackbarOpen(true);
+
+          return;
+        }
+
+        return;
       }
-    });
+
+      if (Object.keys(data.errors).length) {
+        const [, [firstError]] = Object.entries(data.errors)[0];
+
+        setMessage(firstError);
+        setIsSnackbarOpen(true);
+
+        return;
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    window.addEventListener('unhandledrejection', handleRejection);
   }, []);
 
   const handleClose = (_: React.SyntheticEvent | React.MouseEvent, reason?: string) => {

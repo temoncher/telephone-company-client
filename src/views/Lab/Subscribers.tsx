@@ -59,10 +59,10 @@ const Subscribers: React.FC = () => {
     reset({ ...fieldsToReset });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (subscriber: ISubscriber) => {
+  const handleSubmitClick = async (formData: ISubscriber) => {
     const validSubscriber: ISubscriber = {
-      ...subscriber,
-      inn: Number(subscriber.inn),
+      ...formData,
+      inn: Number(formData.inn),
     };
 
     if (selectedRow) {
@@ -183,7 +183,6 @@ const Subscribers: React.FC = () => {
                   inputProps={{
                     name: 'organisation_id',
                   }}
-                  id="demo-simple-select-outlined"
                   label="Locality"
                   error={Boolean(errors.organisation_id)}
                 >

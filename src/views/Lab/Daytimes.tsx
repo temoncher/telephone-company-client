@@ -47,13 +47,13 @@ const Daytimes: React.FC = () => {
     reset({ ...fieldsToReset });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (data: IDaytime) => {
+  const handleSubmitClick = async (formData: IDaytime) => {
     if (selectedRow) {
-      await apiService.daytimeApi.updateDaytime(selectedRow.daytime_id, data);
+      await apiService.daytimeApi.updateDaytime(selectedRow.daytime_id, formData);
 
       setSelectedRow(null);
     } else {
-      await apiService.daytimeApi.createDaytime(data);
+      await apiService.daytimeApi.createDaytime(formData);
     }
 
     await refetchDaytimes();

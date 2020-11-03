@@ -47,13 +47,13 @@ const Organisations: React.FC = () => {
     reset({ ...fieldsToReset });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (data: IOrganisation) => {
+  const handleSubmitClick = async (formData: IOrganisation) => {
     if (selectedRow) {
-      await apiService.organisationApi.updateOrganisation(selectedRow.organisation_id, data);
+      await apiService.organisationApi.updateOrganisation(selectedRow.organisation_id, formData);
 
       setSelectedRow(null);
     } else {
-      await apiService.organisationApi.createOrganisation(data);
+      await apiService.organisationApi.createOrganisation(formData);
     }
 
     await refetchOrganisations();
