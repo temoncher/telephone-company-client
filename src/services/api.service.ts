@@ -5,6 +5,7 @@ import { Role } from '@/enums/role.enum';
 import { BASE_URL } from '../constants/base-url';
 
 import { DatabaseApi } from './api/database.api';
+import { DaytimeApi } from './api/daytime.api';
 import { LocalityApi } from './api/locality.api';
 import { OrganisationApi } from './api/organisation.api';
 import { PriceApi } from './api/price.api';
@@ -21,6 +22,7 @@ export class ApiService {
   localityApi = new LocalityApi(this);
   organisationApi = new OrganisationApi(this);
   subscriberApi = new SubscriberApi(this);
+  daytimeApi = new DaytimeApi(this);
 
   sendRequest = <T>(request: AxiosRequestConfig) => this.axios.request<T>({
     ...request,
