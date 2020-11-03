@@ -23,6 +23,7 @@ import { Role } from '@/enums/role.enum';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
+import Organisations from './Organisations';
 import Prices from './Prices';
 import Subscribers from './Subscribers';
 
@@ -77,6 +78,12 @@ const Lab: React.FC = () => {
       onlyAdmin: true,
       path: `${match.path}/subscribers`,
       component: Subscribers,
+    },
+    {
+      title: 'Organisations',
+      onlyAdmin: true,
+      path: `${match.path}/organisations`,
+      component: Organisations,
     },
   ];
   const otherRole = role === Role.ADMIN ? Role.MANAGER : Role.ADMIN;

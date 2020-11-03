@@ -48,7 +48,11 @@ const Subscribers: React.FC = () => {
   const isFormValid = Object.keys(errors).length === 0;
 
   React.useEffect(() => {
-    if (!selectedRow) return;
+    if (!selectedRow) {
+      reset(defaultValues);
+
+      return;
+    }
 
     const { id, subscriber_id, ...fieldsToReset } = selectedRow;
 
@@ -63,6 +67,8 @@ const Subscribers: React.FC = () => {
 
     if (selectedRow) {
       await apiService.subscriberApi.updateSubscriber(selectedRow.subscriber_id, validSubscriber);
+
+      setSelectedRow(null);
     } else {
       await apiService.subscriberApi.createSubscriber(validSubscriber);
     }

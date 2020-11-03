@@ -44,7 +44,11 @@ const Prices: React.FC = () => {
   const isFormValid = Object.keys(errors).length === 0;
 
   React.useEffect(() => {
-    if (!selectedRow) return;
+    if (!selectedRow) {
+      reset(defaultValues);
+
+      return;
+    }
 
     const { id, price_id, ...fieldsToReset } = selectedRow;
 
@@ -54,6 +58,8 @@ const Prices: React.FC = () => {
   const handleSubmitClick = async (data: IPrice) => {
     if (selectedRow) {
       await apiService.priceApi.updatePrice(selectedRow.price_id, data);
+
+      setSelectedRow(null);
     } else {
       await apiService.priceApi.createPrice(data);
     }
