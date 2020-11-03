@@ -12,7 +12,7 @@ import { CodeBlock, dracula } from 'react-code-blocks';
 import { useHistory } from 'react-router';
 
 import { OnboardingStepAlias } from '@/enums/onboarding-step-alias';
-import { OnboardingStep } from '@/interfaces/onboarding-step.interface';
+import { IOnboardingStep } from '@/interfaces/onboarding-step.interface';
 
 import SchemaSrc from '../assets/DBSchema.png';
 import OnboardingStepper from '../components/OnboardingStepper';
@@ -256,7 +256,7 @@ const Database: React.FC = () => {
     </Grid>
   );
 
-  const steps: OnboardingStep[] = [
+  const steps: IOnboardingStep[] = [
     {
       alias: OnboardingStepAlias.SCHEMA,
       Component: renderSchema,

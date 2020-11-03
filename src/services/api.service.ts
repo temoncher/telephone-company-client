@@ -5,6 +5,8 @@ import { Role } from '@/enums/role.enum';
 import { BASE_URL } from '../constants/base-url';
 
 import { DatabaseApi } from './api/database.api';
+import { LocalityApi } from './api/locality.api';
+import { PriceApi } from './api/price.api';
 
 export class ApiService {
   role: Role = Role.SUPER;
@@ -13,6 +15,8 @@ export class ApiService {
   });
 
   databaseApi = new DatabaseApi(this);
+  priceApi = new PriceApi(this);
+  localityApi = new LocalityApi(this);
 
   sendRequest = <T>(request: AxiosRequestConfig) => this.axios.request<T>({
     ...request,

@@ -7,7 +7,7 @@ import Stepper from '@material-ui/core/Stepper';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 
 import { OnboardingStepAlias } from '@/enums/onboarding-step-alias';
-import { OnboardingStep } from '@/interfaces/onboarding-step.interface';
+import { IOnboardingStep } from '@/interfaces/onboarding-step.interface';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -18,7 +18,7 @@ const useStyles = makeStyles(() =>
 );
 
 interface OnboardingStepperProps {
-  steps: OnboardingStep[];
+  steps: IOnboardingStep[];
   activeStep: OnboardingStepAlias;
 }
 
