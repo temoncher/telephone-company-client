@@ -11,6 +11,7 @@ import { LocalityApi } from './api/locality.api';
 import { OrganisationApi } from './api/organisation.api';
 import { PriceApi } from './api/price.api';
 import { SubscriberApi } from './api/subscriber.api';
+import { TransactionTypeApi } from './api/transaction-type.api';
 
 export class ApiService {
   role: Role = Role.SUPER;
@@ -25,6 +26,7 @@ export class ApiService {
   subscriberApi = new SubscriberApi(this);
   daytimeApi = new DaytimeApi(this);
   daytimePriceApi = new DaytimePriceApi(this);
+  transactionTypeApi = new TransactionTypeApi(this);
 
   sendRequest = <T>(request: AxiosRequestConfig) => this.axios.request<T>({
     ...request,
