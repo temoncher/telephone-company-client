@@ -6,7 +6,9 @@ import { BASE_URL } from '../constants/base-url';
 
 import { DatabaseApi } from './api/database.api';
 import { LocalityApi } from './api/locality.api';
+import { OrganisationApi } from './api/organisation.api';
 import { PriceApi } from './api/price.api';
+import { SubscriberApi } from './api/subscriber.api';
 
 export class ApiService {
   role: Role = Role.SUPER;
@@ -17,6 +19,8 @@ export class ApiService {
   databaseApi = new DatabaseApi(this);
   priceApi = new PriceApi(this);
   localityApi = new LocalityApi(this);
+  organisationApi = new OrganisationApi(this);
+  subscriberApi = new SubscriberApi(this);
 
   sendRequest = <T>(request: AxiosRequestConfig) => this.axios.request<T>({
     ...request,

@@ -15,7 +15,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
-import { ILocality } from '@/interfaces/locality.interface';
 import { IPrice } from '@/interfaces/price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 
@@ -28,7 +27,7 @@ const defaultValues: Omit<Partial<IPrice>, 'price_id'> = {
 
 const Prices: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
-  const [selectedRow, setSelectedRow] = React.useState<IPrice | null>(null);
+  const [selectedRow, setSelectedRow] = React.useState<IPrice & { id: number } | null>(null);
   const { register, handleSubmit, control, errors, reset } = useForm<Omit<IPrice, 'price_id'>>({ defaultValues });
   const { data: pricesData, refetch: refetchPrices } = useQuery('prices', apiService.priceApi.getAllPrices);
   const { data: localitiesData } = useQuery('localities', apiService.localityApi.getAllLocalities);
@@ -45,15 +44,12 @@ const Prices: React.FC = () => {
   const isFormValid = Object.keys(errors).length === 0;
 
   React.useEffect(() => {
-    reset({
-      locality_id: selectedRow?.locality_id,
-      title: selectedRow?.title,
-    });
-  }, [selectedRow]);
+    if (!selectedRow) return;
 
-  React.useEffect(() => {
-    reset();
-  }, []);
+    const { id, price_id, ...fieldsToReset } = selectedRow;
+
+    reset({ ...fieldsToReset });
+  }, [selectedRow]);
 
   const handleSubmitClick = async (data: IPrice) => {
     if (selectedRow) {
@@ -106,7 +102,7 @@ const Prices: React.FC = () => {
             inputRef={register({ required: true })}
             size="small"
             name="title"
-            label="Title"
+            label="Title*"
             variant="outlined"
             InputLabelProps={{ shrink: true }}
             error={Boolean(errors.title)}
@@ -120,7 +116,7 @@ const Prices: React.FC = () => {
               id="locality-label"
               shrink={true}
             >
-              Locality
+              Locality*
             </InputLabel>
             <Controller
               rules={{ required: true }}
