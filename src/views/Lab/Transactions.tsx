@@ -134,7 +134,7 @@ const Transactions: React.FC = () => {
         size="small"
       >
         <InputLabel
-          id="transactionTypes-label"
+          id="transactionType-label"
           shrink={true}
         >
           Transaction type*

@@ -32,6 +32,7 @@ import Prices from './Prices';
 import Subscribers from './Subscribers';
 import TransactionTypes from './TransactionTypes';
 import Transactions from './Transactions';
+import Calls from './Calls';
 
 interface MenuItem {
   url: string;
@@ -118,6 +119,12 @@ const Lab: React.FC = () => {
       onlyAdmin: true,
       url: `${match.path}/transactions`,
       component: Transactions,
+    },
+    {
+      title: 'Calls',
+      onlyAdmin: true,
+      url: `${match.path}/calls`,
+      component: Calls,
     },
   ];
   const otherRole = role === Role.ADMIN ? Role.MANAGER : Role.ADMIN;
