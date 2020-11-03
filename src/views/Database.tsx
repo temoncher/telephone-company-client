@@ -59,6 +59,8 @@ const Database: React.FC = () => {
     try {
       if (callback) {
         await callback();
+
+        setErrored(false);
       }
 
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
