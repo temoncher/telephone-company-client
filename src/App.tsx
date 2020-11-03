@@ -24,36 +24,39 @@ const App: React.FC = () => {
     if (event.reason.isAxiosError) {
       const axiosError = event.reason as AxiosError<string | SqlError>;
 
-      if (!axiosError.response) return;
+      if (axiosError.response) {
+        const { data } = axiosError.response;
 
-      const { data } = axiosError.response;
+        if (typeof data === 'string') {
+          if (data.includes('permission was denied')) {
+            setMessage('Permission denied');
+            setIsSnackbarOpen(true);
 
-      if (typeof data === 'string') {
-        if (data.includes('permission was denied')) {
-          setMessage('Permission denied');
-          setIsSnackbarOpen(true);
+            return;
+          }
+
+          if (data.includes('Violation of PRIMARY KEY constraint')) {
+            setMessage('Violation of PRIMARY KEY constraint');
+            setIsSnackbarOpen(true);
+
+            return;
+          }
 
           return;
         }
 
-        if (data.includes('Violation of PRIMARY KEY constraint')) {
-          setMessage('Violation of PRIMARY KEY constraint');
+        if (Object.keys(data.errors).length) {
+          const [, [firstError]] = Object.entries(data.errors)[0];
+
+          setMessage(firstError);
           setIsSnackbarOpen(true);
 
           return;
         }
-
-        return;
       }
 
-      if (Object.keys(data.errors).length) {
-        const [, [firstError]] = Object.entries(data.errors)[0];
-
-        setMessage(firstError);
-        setIsSnackbarOpen(true);
-
-        return;
-      }
+      setMessage('Something went terribly wrong');
+      setIsSnackbarOpen(true);
     }
   };
 

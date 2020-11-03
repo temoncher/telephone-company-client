@@ -5,13 +5,12 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemIcon,
   ListItemSecondaryAction,
+  ListSubheader,
   makeStyles,
   IconButton,
   Divider,
 } from '@material-ui/core';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import CachedIcon from '@material-ui/icons/Cached';
 import {
   Route,
@@ -155,6 +154,7 @@ const Lab: React.FC = () => {
             </ListItemSecondaryAction>
           </ListItem>
           <Divider />
+          <ListSubheader>API</ListSubheader>
           {menuItems.map((item) => (
             <ListItem
               button

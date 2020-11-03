@@ -7,6 +7,7 @@ import {
   Container,
   makeStyles,
   createStyles,
+  CircularProgress,
 } from '@material-ui/core';
 import { CodeBlock, dracula } from 'react-code-blocks';
 import { useHistory } from 'react-router';
@@ -46,13 +47,37 @@ const useStyles = makeStyles(() =>
 
 const Database: React.FC = () => {
   const [activeStep, setActiveStep] = React.useState(OnboardingStepAlias.SCHEMA);
+  const [loading, setLoading] = React.useState(false);
+  const [errored, setErrored] = React.useState(false);
   const apiService = React.useContext(ApiServiceContext);
   const history = useHistory();
   const classes = useStyles();
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const handleNext = async (callback?: () => Promise<unknown>) => {
+    setLoading(true);
+
+    try {
+      if (callback) {
+        await callback();
+      }
+
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    } catch(error) {
+      setErrored(true);
+
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const renderExecutionProgress = () => (
+    <CircularProgress
+      style={{ padding: '2px 24px' }}
+      color="inherit"
+      size={20}
+    />
+  );
 
   const renderSchema: React.FC = () => (
     <Grid
@@ -72,8 +97,8 @@ const Database: React.FC = () => {
       <Grid item>
         <Button
           variant="contained"
-          color="primary"
-          onClick={handleNext}
+          color={ errored ? 'secondary' : 'primary'}
+          onClick={() => handleNext()}
         >
           Next
         </Button>
@@ -103,14 +128,10 @@ const Database: React.FC = () => {
       <Grid item>
         <Button
           variant="contained"
-          color="primary"
-          onClick={() => {
-            apiService.databaseApi.createDatabase();
-
-            handleNext();
-          }}
+          color={ errored ? 'secondary' : 'primary'}
+          onClick={() => handleNext(apiService.databaseApi.createDatabase)}
         >
-          Execute
+          { loading ? renderExecutionProgress() : 'Execute'}
         </Button>
       </Grid>
     </Grid>
@@ -138,14 +159,10 @@ const Database: React.FC = () => {
       <Grid item>
         <Button
           variant="contained"
-          color="primary"
-          onClick={() => {
-            apiService.databaseApi.createRoles();
-
-            handleNext();
-          }}
+          color={ errored ? 'secondary' : 'primary'}
+          onClick={() => handleNext(apiService.databaseApi.createRoles)}
         >
-          Execute
+          { loading ? renderExecutionProgress() : 'Execute'}
         </Button>
       </Grid>
     </Grid>
@@ -186,14 +203,10 @@ const Database: React.FC = () => {
       <Grid item>
         <Button
           variant="contained"
-          color="primary"
-          onClick={() => {
-            apiService.databaseApi.setupTriggers();
-
-            handleNext();
-          }}
+          color={ errored ? 'secondary' : 'primary'}
+          onClick={() => handleNext(apiService.databaseApi.setupTriggers)}
         >
-          Execute
+          { loading ? renderExecutionProgress() : 'Execute'}
         </Button>
       </Grid>
     </Grid>
@@ -221,14 +234,10 @@ const Database: React.FC = () => {
       <Grid item>
         <Button
           variant="contained"
-          color="primary"
-          onClick={() => {
-            apiService.databaseApi.seed();
-
-            handleNext();
-          }}
+          color={ errored ? 'secondary' : 'primary'}
+          onClick={() => handleNext(apiService.databaseApi.seed)}
         >
-          Finish
+          { loading ? renderExecutionProgress() : 'Execute'}
         </Button>
       </Grid>
     </Grid>
@@ -246,11 +255,11 @@ const Database: React.FC = () => {
       <Grid item>
         <Button
           className={classes.buttonMargin}
-          variant="outlined"
+          variant="contained"
           color="primary"
           onClick={() => history.push('lab')}
         >
-          Proceed
+          Finish
         </Button>
       </Grid>
     </Grid>
