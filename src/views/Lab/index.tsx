@@ -29,6 +29,7 @@ import Subscribers from './Subscribers';
 interface MenuItem {
   path: string;
   title: string;
+  onlyAdmin?: true;
   component: React.FC;
 }
 
@@ -67,14 +68,15 @@ const Lab: React.FC = () => {
 
   const menuItems: MenuItem[] = [
     {
-      title: 'Subscribers',
-      path: `${match.path}/subscribers`,
-      component: Subscribers,
-    },
-    {
       title: 'Prices',
       path: `${match.path}/prices`,
       component: Prices,
+    },
+    {
+      title: 'Subscribers',
+      onlyAdmin: true,
+      path: `${match.path}/subscribers`,
+      component: Subscribers,
     },
   ];
   const otherRole = role === Role.ADMIN ? Role.MANAGER : Role.ADMIN;
@@ -109,7 +111,10 @@ const Lab: React.FC = () => {
               key={`menu_${item.title}`}
               onClick={() => history.push(item.path)}
             >
-              <ListItemText primary={item.title} />
+              <ListItemText
+                primary={item.title}
+                secondary={item.onlyAdmin && 'Admin only'}
+              />
             </ListItem>
           ))}
         </List>
