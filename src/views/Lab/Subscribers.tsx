@@ -108,7 +108,7 @@ const Subscribers: React.FC = () => {
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit row' : 'Create new row'}
+          {selectedRow ? 'Edit subscriber' : 'Create new subscriber'}
           {selectedRow && <IconButton
             size="small"
             onClick={() => setSelectedRow(null)}

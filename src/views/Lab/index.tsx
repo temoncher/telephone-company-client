@@ -17,6 +17,7 @@ import {
   Switch,
   useRouteMatch,
   useHistory,
+  useLocation,
 } from 'react-router-dom';
 
 import { Role } from '@/enums/role.enum';
@@ -33,7 +34,7 @@ import TransactionTypes from './TransactionTypes';
 import Transactions from './Transactions';
 
 interface MenuItem {
-  path: string;
+  url: string;
   title: string;
   onlyAdmin?: true;
   component: React.FC;
@@ -66,6 +67,7 @@ const Lab: React.FC = () => {
   const [role, setRole] = React.useState(Role.ADMIN);
   const classes = useStyles();
   const match = useRouteMatch();
+  const location = useLocation();
   const history = useHistory();
 
   React.useEffect(() => {
@@ -75,46 +77,46 @@ const Lab: React.FC = () => {
   const menuItems: MenuItem[] = [
     {
       title: 'Prices',
-      path: `${match.path}/prices`,
+      url: `${match.path}/prices`,
       component: Prices,
     },
     {
       title: 'Localities',
-      path: `${match.path}/localities`,
+      url: `${match.path}/localities`,
       component: Localities,
     },
     {
       title: 'Daytimes',
-      path: `${match.path}/daytimes`,
+      url: `${match.path}/daytimes`,
       component: Daytimes,
     },
     {
       title: 'Daytime prices',
-      path: `${match.path}/daytimeprices`,
+      url: `${match.path}/daytimeprices`,
       component: DaytimePrices,
     },
     {
       title: 'Subscribers',
       onlyAdmin: true,
-      path: `${match.path}/subscribers`,
+      url: `${match.path}/subscribers`,
       component: Subscribers,
     },
     {
       title: 'Organisations',
       onlyAdmin: true,
-      path: `${match.path}/organisations`,
+      url: `${match.path}/organisations`,
       component: Organisations,
     },
     {
       title: 'Transaction types',
       onlyAdmin: true,
-      path: `${match.path}/transactiontypes`,
+      url: `${match.path}/transactiontypes`,
       component: TransactionTypes,
     },
     {
       title: 'Transactions',
       onlyAdmin: true,
-      path: `${match.path}/transactions`,
+      url: `${match.path}/transactions`,
       component: Transactions,
     },
   ];
@@ -147,8 +149,9 @@ const Lab: React.FC = () => {
           {menuItems.map((item) => (
             <ListItem
               button
+              selected={location.pathname === item.url}
               key={`menu_${item.title}`}
-              onClick={() => history.push(item.path)}
+              onClick={() => history.push(item.url)}
             >
               <ListItemText
                 primary={item.title}
@@ -168,7 +171,7 @@ const Lab: React.FC = () => {
           {menuItems.map((item) => (
             <Route
               key={`route_${item.title}`}
-              path={item.path}
+              path={item.url}
               component={item.component}
             />
           ))}

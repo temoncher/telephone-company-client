@@ -109,7 +109,7 @@ const DaytimePrices: React.FC = () => {
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit row' : 'Create new row'}
+          {selectedRow ? 'Edit daytime price' : 'Create new daytime price'}
           {selectedRow && <IconButton
             size="small"
             onClick={() => setSelectedRow(null)}

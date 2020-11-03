@@ -103,7 +103,7 @@ const Prices: React.FC = () => {
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit row' : 'Create new row'}
+          {selectedRow ? 'Edit price' : 'Create new price'}
           {selectedRow && <IconButton
             size="small"
             onClick={() => setSelectedRow(null)}

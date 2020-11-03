@@ -4,10 +4,15 @@ import {
   Button,
   IconButton,
   TextField,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
 import { ITransaction } from '@/interfaces/transaction.interface';
@@ -28,11 +33,15 @@ const defaultValues: TransactionForm = {
 const Transactions: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ITransaction & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset } = useForm<TransactionForm>({ defaultValues });
+  const { register, handleSubmit, errors, reset, control } = useForm<TransactionForm>({ defaultValues });
   const { data: transactionsData, refetch: refetchTransactions } = useQuery('transactions', apiService.transactionApi.getAllTransactions);
+  const { data: accountsData } = useQuery('accounts', apiService.accountApi.getAllAccounts);
+  const { data: transactionTypesData } = useQuery('transactionTypes', apiService.transactionTypeApi.getAllTransactionTypes);
   const globalClasses = useGlobalStyles();
 
   const transactions = transactionsData?.data;
+  const accounts = accountsData?.data;
+  const transactionTypes = transactionTypesData?.data;
   const columns: ColDef[] = Object.entries(transactions ? transactions[0] : {}).map(([key, value]) => ({
     field: key,
     width: typeof value === 'string' ? 200 : 100,
@@ -73,13 +82,91 @@ const Transactions: React.FC = () => {
   };
 
   const renderWarning = (): JSX.Element => (
-    <>Transactions can not be edited or deleted due to security reasons</>
+    <div className={globalClasses.editorForm}>
+      Transactions can not be edited or deleted due to security reasons
+    </div>
   );
   const renderForm = (): JSX.Element => (
     <form
       className={globalClasses.editorForm}
       onSubmit={handleSubmit(handleSubmitClick)}
     >
+      <FormControl
+        variant="outlined"
+        size="small"
+      >
+        <InputLabel
+          id="account-label"
+          shrink={true}
+        >
+          Account*
+        </InputLabel>
+        <Controller
+          rules={{ required: true }}
+          as={
+            <Select
+              labelId="account-label"
+              inputProps={{
+                name: 'account_id',
+              }}
+              label="Account"
+              error={Boolean(errors.account_id)}
+            >
+              {accounts?.map((account) => (
+                <MenuItem
+                  key={`${account.subscriber_id}_${account.account_id}`}
+                  value={account.account_id}
+                >
+                  {`${account.subscriber_id}_${account.account_id}`}
+                </MenuItem>
+              ))}
+            </Select>
+          }
+          name="account_id"
+          control={control}
+          defaultValue=""
+        />
+        <FormHelperText error={true}>{errors.account_id ? 'Field is required' : ' '}</FormHelperText>
+      </FormControl>
+
+      <FormControl
+        variant="outlined"
+        size="small"
+      >
+        <InputLabel
+          id="transactionTypes-label"
+          shrink={true}
+        >
+          Transaction type*
+        </InputLabel>
+        <Controller
+          rules={{ required: true }}
+          as={
+            <Select
+              labelId="transactionType-label"
+              inputProps={{
+                name: 'transaction_type_id',
+              }}
+              label="Account"
+              error={Boolean(errors.transaction_type_id)}
+            >
+              {transactionTypes?.map((transactionType) => (
+                <MenuItem
+                  key={transactionType.title}
+                  value={transactionType.transaction_type_id}
+                >
+                  {transactionType.title}
+                </MenuItem>
+              ))}
+            </Select>
+          }
+          name="transaction_type_id"
+          control={control}
+          defaultValue=""
+        />
+        <FormHelperText error={true}>{errors.transaction_type_id ? 'Field is required' : ' '}</FormHelperText>
+      </FormControl>
+
       <TextField
         inputRef={register({ required: true })}
         size="small"
@@ -119,7 +206,7 @@ const Transactions: React.FC = () => {
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit row' : 'Create new row'}
+          {selectedRow ? 'Edit daytime price' : 'Create new transaction'}
           {selectedRow && <IconButton
             size="small"
             onClick={() => setSelectedRow(null)}

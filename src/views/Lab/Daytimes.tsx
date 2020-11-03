@@ -89,7 +89,7 @@ const Daytimes: React.FC = () => {
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit row' : 'Create new row'}
+          {selectedRow ? 'Edit daytime' : 'Create new daytime'}
           {selectedRow && <IconButton
             size="small"
             onClick={() => setSelectedRow(null)}

@@ -89,7 +89,7 @@ const Organisations: React.FC = () => {
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit row' : 'Create new row'}
+          {selectedRow ? 'Edit organisation' : 'Create new organisation'}
           {selectedRow && <IconButton
             size="small"
             onClick={() => setSelectedRow(null)}

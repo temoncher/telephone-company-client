@@ -89,7 +89,7 @@ const Localitys: React.FC = () => {
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit row' : 'Create new row'}
+          {selectedRow ? 'Edit locality' : 'Create new locality'}
           {selectedRow && <IconButton
             size="small"
             onClick={() => setSelectedRow(null)}

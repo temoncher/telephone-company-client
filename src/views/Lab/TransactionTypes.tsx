@@ -89,7 +89,7 @@ const TransactionTypes: React.FC = () => {
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit row' : 'Create new row'}
+          {selectedRow ? 'Edit transaction type' : 'Create new transaction type'}
           {selectedRow && <IconButton
             size="small"
             onClick={() => setSelectedRow(null)}
