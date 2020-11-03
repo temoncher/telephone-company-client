@@ -21,7 +21,7 @@ import Subscribers from './Subscribers';
 interface MenuItem {
   path: string;
   title: string;
-  component: any;
+  component: React.FC;
 }
 
 const drawerWidth = 240;

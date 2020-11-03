@@ -8,13 +8,35 @@ export class DatabaseApi extends ApiBase {
     url: `${DATABASE_URL_ROOT}`,
   });
 
-  createDatabase = () => this.apiService.sendRequest<{ name: string }[]>({
+  createDatabase = () => this.apiService.sendRequest<number>({
     method: 'POST',
-    url: `${DATABASE_URL_ROOT}`,
+    url: `${DATABASE_URL_ROOT}/tables`,
+    headers: {
+      Authorization: 'Bearer Super',
+    },
   });
 
-  dropDatabase = () => this.apiService.sendRequest<{ name: string }[]>({
-    method: 'DELETE',
-    url: `${DATABASE_URL_ROOT}`,
+  createRoles = () => this.apiService.sendRequest<number>({
+    method: 'POST',
+    url: `${DATABASE_URL_ROOT}/roles`,
+    headers: {
+      Authorization: 'Bearer Super',
+    },
+  });
+
+  setupTriggers = () => this.apiService.sendRequest<number>({
+    method: 'POST',
+    url: `${DATABASE_URL_ROOT}/triggers`,
+    headers: {
+      Authorization: 'Bearer Super',
+    },
+  });
+
+  seed = () => this.apiService.sendRequest<number>({
+    method: 'POST',
+    url: `${DATABASE_URL_ROOT}/seed`,
+    headers: {
+      Authorization: 'Bearer Super',
+    },
   });
 }

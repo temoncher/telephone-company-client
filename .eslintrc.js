@@ -4,7 +4,6 @@ module.exports = {
     'es2020': true,
   },
   'extends': [
-    'airbnb-typescript',
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
