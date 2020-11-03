@@ -17,18 +17,22 @@ import { useQuery } from 'react-query';
 
 import { IPrice } from '@/interfaces/price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
+import { Stringified } from '@/types/stringified';
+import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
-const defaultValues: Omit<Partial<IPrice>, 'price_id'> = {
-  locality_id: undefined,
+type PriceForm = Stringified<Omit<IPrice, 'price_id'>>
+
+const defaultValues: PriceForm = {
+  locality_id: '',
   title: '',
 };
 
 const Prices: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IPrice & { id: number } | null>(null);
-  const { register, handleSubmit, control, errors, reset } = useForm<Omit<IPrice, 'price_id'>>({ defaultValues });
+  const { register, handleSubmit, control, errors, reset } = useForm<PriceForm>({ defaultValues });
   const { data: pricesData, refetch: refetchPrices } = useQuery('prices', apiService.priceApi.getAllPrices);
   const { data: localitiesData } = useQuery('localities', apiService.localityApi.getAllLocalities);
   const globalClasses = useGlobalStyles();
@@ -52,16 +56,21 @@ const Prices: React.FC = () => {
 
     const { id, price_id, ...fieldsToReset } = selectedRow;
 
-    reset({ ...fieldsToReset });
+    reset({ ...stringifyObjectProperites(fieldsToReset) });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (formData: IPrice) => {
+  const handleSubmitClick = async (formData: PriceForm) => {
+    const validPriceForm: Omit<IPrice, 'price_id'> = {
+      ...formData,
+      locality_id: Number(formData.locality_id),
+    };
+
     if (selectedRow) {
-      await apiService.priceApi.updatePrice(selectedRow.price_id, formData);
+      await apiService.priceApi.updatePrice(selectedRow.price_id, validPriceForm);
 
       setSelectedRow(null);
     } else {
-      await apiService.priceApi.createPrice(formData);
+      await apiService.priceApi.createPrice(validPriceForm);
     }
 
     await refetchPrices();

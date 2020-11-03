@@ -12,17 +12,20 @@ import { useQuery } from 'react-query';
 
 import { IDaytime } from '@/interfaces/daytime.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
+import { Stringified } from '@/types/stringified';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
-const defaultValues: Omit<Partial<IDaytime>, 'daytime_id'> = {
+type DaytimeForm = Stringified<Omit<IDaytime, 'daytime_id'>>;
+
+const defaultValues: DaytimeForm = {
   title: '',
 };
 
 const Daytimes: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IDaytime & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset } = useForm<Omit<IDaytime, 'daytime_id'>>({ defaultValues });
+  const { register, handleSubmit, errors, reset } = useForm<DaytimeForm>({ defaultValues });
   const { data: daytimesData, refetch: refetchDaytimes } = useQuery('daytimes', apiService.daytimeApi.getAllDaytimes);
   const globalClasses = useGlobalStyles();
 
@@ -47,7 +50,7 @@ const Daytimes: React.FC = () => {
     reset({ ...fieldsToReset });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (formData: IDaytime) => {
+  const handleSubmitClick = async (formData: DaytimeForm) => {
     if (selectedRow) {
       await apiService.daytimeApi.updateDaytime(selectedRow.daytime_id, formData);
 

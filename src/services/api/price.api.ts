@@ -10,13 +10,13 @@ export class PriceApi extends ApiBase {
     url: `${PRICES_URL_ROOT}`,
   });
 
-  createPrice = (price: IPrice) => this.apiService.sendRequest<number>({
+  createPrice = (price: Omit<IPrice, 'price_id'>) => this.apiService.sendRequest<number>({
     method: 'POST',
     url: `${PRICES_URL_ROOT}`,
     data: price,
   });
 
-  updatePrice = (priceId: number, { price_id, ...price }: IPrice) => this.apiService.sendRequest<number>({
+  updatePrice = (priceId: number, price: Omit<IPrice, 'price_id'>) => this.apiService.sendRequest<number>({
     method: 'PUT',
     url: `${PRICES_URL_ROOT}/${priceId}`,
     data: price,

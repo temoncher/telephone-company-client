@@ -12,17 +12,20 @@ import { useQuery } from 'react-query';
 
 import { ILocality } from '@/interfaces/locality.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
+import { Stringified } from '@/types/stringified';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
-const defaultValues: Omit<Partial<ILocality>, 'locality_id'> = {
+type LocalityForm = Stringified<Omit<ILocality, 'locality_id'>>
+
+const defaultValues: LocalityForm = {
   name: '',
 };
 
 const Localitys: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ILocality & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset } = useForm<Omit<ILocality, 'locality_id'>>({ defaultValues });
+  const { register, handleSubmit, errors, reset } = useForm<LocalityForm>({ defaultValues });
   const { data: localitiesData, refetch: refetchLocalitys } = useQuery('localitys', apiService.localityApi.getAllLocalities);
   const globalClasses = useGlobalStyles();
 
@@ -47,7 +50,7 @@ const Localitys: React.FC = () => {
     reset({ ...fieldsToReset });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (formData: ILocality) => {
+  const handleSubmitClick = async (formData: LocalityForm) => {
     if (selectedRow) {
       await apiService.localityApi.updateLocality(selectedRow.locality_id, formData);
 

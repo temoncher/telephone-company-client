@@ -12,17 +12,20 @@ import { useQuery } from 'react-query';
 
 import { IOrganisation } from '@/interfaces/organisation.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
+import { Stringified } from '@/types/stringified';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
-const defaultValues: Omit<Partial<IOrganisation>, 'organisation_id'> = {
+type OrganisationForm = Stringified<Omit<IOrganisation, 'organisation_id'>>
+
+const defaultValues: OrganisationForm = {
   name: '',
 };
 
 const Organisations: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IOrganisation & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset } = useForm<Omit<IOrganisation, 'organisation_id'>>({ defaultValues });
+  const { register, handleSubmit, errors, reset } = useForm<OrganisationForm>({ defaultValues });
   const { data: organisationsData, refetch: refetchOrganisations } = useQuery('organisations', apiService.organisationApi.getAllOrganisations);
   const globalClasses = useGlobalStyles();
 
@@ -47,7 +50,7 @@ const Organisations: React.FC = () => {
     reset({ ...fieldsToReset });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (formData: IOrganisation) => {
+  const handleSubmitClick = async (formData: OrganisationForm) => {
     if (selectedRow) {
       await apiService.organisationApi.updateOrganisation(selectedRow.organisation_id, formData);
 

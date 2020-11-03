@@ -17,17 +17,23 @@ import { useQuery } from 'react-query';
 
 import { IDaytimePrice } from '@/interfaces/daytime-price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
+import { Stringified } from '@/types/stringified';
+import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
-const defaultValues: Partial<IDaytimePrice> = {
-  price_per_minute: 0,
+type DaytimePriceForm = Stringified<IDaytimePrice>;
+
+const defaultValues: DaytimePriceForm = {
+  daytime_id: '',
+  price_id: '',
+  price_per_minute: '',
 };
 
 const DaytimePrices: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IDaytimePrice & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset, control } = useForm<IDaytimePrice>({ defaultValues: defaultValues as any });
+  const { register, handleSubmit, errors, reset, control } = useForm<DaytimePriceForm>({ defaultValues });
   const { data: daytimePricesData, refetch: refetchDaytimePrices } = useQuery('daytimePrices', apiService.daytimePriceApi.getAllDaytimePrices);
   const { data: daytimesData } = useQuery('daytimes', apiService.daytimeApi.getAllDaytimes);
   const { data: pricesData } = useQuery('prices', apiService.priceApi.getAllPrices);
@@ -46,17 +52,17 @@ const DaytimePrices: React.FC = () => {
 
   React.useEffect(() => {
     if (!selectedRow) {
-      reset(defaultValues as any);
+      reset(defaultValues);
 
       return;
     }
 
     const { id, ...fieldsToReset } = selectedRow;
 
-    reset({ ...fieldsToReset });
+    reset({ ...stringifyObjectProperites(fieldsToReset) });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (formData: IDaytimePrice) => {
+  const handleSubmitClick = async (formData: DaytimePriceForm) => {
     const validDaytimePrice: IDaytimePrice = {
       price_id: Number(selectedRow ? selectedRow.price_id : formData.price_id),
       daytime_id: Number(selectedRow ? selectedRow.daytime_id : formData.daytime_id),
@@ -93,11 +99,11 @@ const DaytimePrices: React.FC = () => {
       >
         {
           rows &&
-        <DataGrid
-          columns={columns}
-          rows={rows}
-          onRowClick={({ data }) => setSelectedRow(data as IDaytimePrice & { id: number })}
-        />
+            <DataGrid
+              columns={columns}
+              rows={rows}
+              onRowClick={({ data }) => setSelectedRow(data as IDaytimePrice & { id: number })}
+            />
         }
 
       </div>

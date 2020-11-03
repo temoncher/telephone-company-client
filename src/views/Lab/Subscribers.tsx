@@ -17,12 +17,16 @@ import { useQuery } from 'react-query';
 
 import { ISubscriber } from '@/interfaces/subscriber.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
+import { Stringified } from '@/types/stringified';
+import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
-const defaultValues: Omit<Partial<ISubscriber>, 'subscriber_id'> = {
-  organisation_id: undefined,
-  inn: undefined,
+type SubscriberForm = Stringified<Omit<ISubscriber, 'subscriber_id'>>
+
+const defaultValues: SubscriberForm = {
+  organisation_id: '',
+  inn: '',
   first_name: '',
   last_name: '',
   patronymic: '',
@@ -32,7 +36,7 @@ const defaultValues: Omit<Partial<ISubscriber>, 'subscriber_id'> = {
 const Subscribers: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ISubscriber & { id: number } | null>(null);
-  const { register, handleSubmit, control, errors, reset } = useForm<Omit<ISubscriber, 'subscriber_id'>>({ defaultValues });
+  const { register, handleSubmit, control, errors, reset } = useForm<SubscriberForm>({ defaultValues });
   const { data: subscribersData, refetch: refetchSubscribers } = useQuery('subscribers', apiService.subscriberApi.getAllSubscribers);
   const { data: organisationsData } = useQuery('organisations', apiService.organisationApi.getAllOrganisations);
   const globalClasses = useGlobalStyles();
@@ -56,21 +60,22 @@ const Subscribers: React.FC = () => {
 
     const { id, subscriber_id, ...fieldsToReset } = selectedRow;
 
-    reset({ ...fieldsToReset });
+    reset({ ...stringifyObjectProperites(fieldsToReset) });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (formData: ISubscriber) => {
-    const validSubscriber: ISubscriber = {
+  const handleSubmitClick = async (formData: SubscriberForm) => {
+    const validSubscriberForm: Omit<ISubscriber, 'subscriber_id'> = {
       ...formData,
       inn: Number(formData.inn),
+      organisation_id: Number(formData.organisation_id),
     };
 
     if (selectedRow) {
-      await apiService.subscriberApi.updateSubscriber(selectedRow.subscriber_id, validSubscriber);
+      await apiService.subscriberApi.updateSubscriber(selectedRow.subscriber_id, validSubscriberForm);
 
       setSelectedRow(null);
     } else {
-      await apiService.subscriberApi.createSubscriber(validSubscriber);
+      await apiService.subscriberApi.createSubscriber(validSubscriberForm);
     }
 
     await refetchSubscribers();

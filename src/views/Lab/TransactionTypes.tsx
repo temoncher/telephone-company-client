@@ -12,8 +12,11 @@ import { useQuery } from 'react-query';
 
 import { ITransactionType } from '@/interfaces/transaction-type.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
+import { Stringified } from '@/types/stringified';
 
 import ApiServiceContext from '../../contexts/api-service.context';
+
+type TransactionTypeForm = Stringified<Omit<ITransactionType, 'transaction_type_id'>>
 
 const defaultValues: Omit<Partial<ITransactionType>, 'transaction_type_id'> = {
   title: '',
@@ -22,7 +25,7 @@ const defaultValues: Omit<Partial<ITransactionType>, 'transaction_type_id'> = {
 const TransactionTypes: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ITransactionType & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset } = useForm<Omit<ITransactionType, 'transaction_type_id'>>({ defaultValues });
+  const { register, handleSubmit, errors, reset } = useForm<TransactionTypeForm>({ defaultValues });
   const { data: transactionTypesData, refetch: refetchTransactionTypes } = useQuery('transactionTypes', apiService.transactionTypeApi.getAllTransactionTypes);
   const globalClasses = useGlobalStyles();
 
@@ -47,7 +50,7 @@ const TransactionTypes: React.FC = () => {
     reset({ ...fieldsToReset });
   }, [selectedRow]);
 
-  const handleSubmitClick = async (formData: ITransactionType) => {
+  const handleSubmitClick = async (formData: TransactionTypeForm) => {
     if (selectedRow) {
       await apiService.transactionTypeApi.updateTransactionType(selectedRow.transaction_type_id, formData);
 
