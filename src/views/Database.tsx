@@ -45,10 +45,10 @@ const useStyles = makeStyles(() =>
 );
 
 const Database: React.FC = () => {
+  const [activeStep, setActiveStep] = React.useState(OnboardingStepAlias.SCHEMA);
   const apiService = React.useContext(ApiServiceContext);
   const history = useHistory();
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(OnboardingStepAlias.SCHEMA);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -242,23 +242,15 @@ const Database: React.FC = () => {
     >
       <Grid item>
         <Typography variant="body1">All steps completed - preparation finished</Typography>
-        <Typography variant="body1">Choose role</Typography>
       </Grid>
       <Grid item>
         <Button
           className={classes.buttonMargin}
-          variant="contained"
+          variant="outlined"
           color="primary"
           onClick={() => history.push('lab')}
         >
-          Proceed as manager
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => history.push('lab')}
-        >
-          Proceed as admin
+          Proceed
         </Button>
       </Grid>
     </Grid>

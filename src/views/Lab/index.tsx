@@ -5,8 +5,12 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemSecondaryAction,
   makeStyles,
+  IconButton,
+  Divider,
 } from '@material-ui/core';
+import CachedIcon from '@material-ui/icons/Cached';
 import {
   Route,
   Redirect,
@@ -14,6 +18,10 @@ import {
   useRouteMatch,
   useHistory,
 } from 'react-router-dom';
+
+import { Role } from '@/enums/role.enum';
+
+import ApiServiceContext from '../../contexts/api-service.context';
 
 import Prices from './Prices';
 import Subscribers from './Subscribers';
@@ -45,9 +53,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Lab: React.FC = () => {
+  const apiService = React.useContext(ApiServiceContext);
+  const [role, setRole] = React.useState(Role.ADMIN);
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
+
+  React.useEffect(() => {
+    apiService.setRole(role);
+  }, [role]);
+
   const menuItems: MenuItem[] = [
     {
       title: 'Subscribers',
@@ -60,6 +75,7 @@ const Lab: React.FC = () => {
       component: Prices,
     },
   ];
+  const otherRole = role === Role.ADMIN ? Role.MANAGER : Role.ADMIN;
 
   return (
     <div className={classes.root}>
@@ -72,6 +88,19 @@ const Lab: React.FC = () => {
         anchor="left"
       >
         <List>
+          <ListItem button >
+            <ListItemText primary={`You are: ${role}`} />
+            <ListItemSecondaryAction>
+              <IconButton
+                color="primary"
+                edge="end"
+                onClick={() => setRole(otherRole)}
+              >
+                <CachedIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+          <Divider />
           {menuItems.map((item) => (
             <ListItem
               button
