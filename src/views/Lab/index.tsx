@@ -23,6 +23,7 @@ import { Role } from '@/enums/role.enum';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
+import Localities from './Localities';
 import Organisations from './Organisations';
 import Prices from './Prices';
 import Subscribers from './Subscribers';
@@ -72,6 +73,11 @@ const Lab: React.FC = () => {
       title: 'Prices',
       path: `${match.path}/prices`,
       component: Prices,
+    },
+    {
+      title: 'Localities',
+      path: `${match.path}/localities`,
+      component: Localities,
     },
     {
       title: 'Subscribers',
