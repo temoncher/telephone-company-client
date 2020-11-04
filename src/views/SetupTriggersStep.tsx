@@ -7,11 +7,11 @@ import {
   Tabs,
   Box,
 } from '@material-ui/core';
-import { CodeBlock, dracula } from 'react-code-blocks';
 
 import { useOnboardingStyles } from '@/styles/onboarding-styles';
 
 import ExecutionProgress from '../components/ExecutionProgress';
+import SqlCodeBlock from '../components/SqlCodeBlock';
 import {
   createAccountTriggerSQL,
   updateBalanceTriggerSQL,
@@ -76,44 +76,28 @@ const SetupTriggersStep: React.FC<SetupTriggersStepProps> = ({ loading, errored,
         value={value}
         index={0}
       >
-        <CodeBlock
-          text={createAccountTriggerSQL}
-          language="sql"
-          theme={dracula}
-        />
+        <SqlCodeBlock text={createAccountTriggerSQL} />
       </TabPanel>
 
       <TabPanel
         value={value}
         index={1}
       >
-        <CodeBlock
-          text={updateBalanceTriggerSQL}
-          language="sql"
-          theme={dracula}
-        />
+        <SqlCodeBlock text={updateBalanceTriggerSQL} />
       </TabPanel>
 
       <TabPanel
         value={value}
         index={2}
       >
-        <CodeBlock
-          text={createTransactionAfterCallTriggerSQL}
-          language="sql"
-          theme={dracula}
-        />
+        <SqlCodeBlock text={createTransactionAfterCallTriggerSQL} />
       </TabPanel>
 
       <TabPanel
         value={value}
         index={3}
       >
-        <CodeBlock
-          text={softDeleteCallTriggerSQL}
-          language="sql"
-          theme={dracula}
-        />
+        <SqlCodeBlock text={softDeleteCallTriggerSQL} />
       </TabPanel>
 
       <Grid item>

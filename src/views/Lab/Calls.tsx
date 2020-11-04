@@ -295,7 +295,7 @@ const Calls: React.FC = () => {
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
-          <Typography>
+          <Typography variant="body1">
             {selectedRow ? 'Edit call' : 'Create new call'}
           </Typography>
           {selectedRow && (

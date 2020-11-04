@@ -10,7 +10,7 @@ export const useGlobalStyles = makeStyles((theme: Theme) => ({
     fontWeight: 400,
     borderRadius: 4,
     border: '1px solid rgba(224, 224, 224, 1)',
-    width: '32%',
+    width: '34%',
     height: '100%',
     '& > *': {
       padding: theme.spacing(2),

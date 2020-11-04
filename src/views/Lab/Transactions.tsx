@@ -81,7 +81,7 @@ const Transactions: React.FC = () => {
 
   const renderWarning = (): JSX.Element => (
     <div className={globalClasses.editorForm}>
-      <Typography>
+      <Typography variant="body1">
         Transactions can not be edited nor deleted due to balance history integrity reasons
       </Typography>
     </div>

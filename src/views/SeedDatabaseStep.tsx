@@ -5,11 +5,11 @@ import {
   Button,
   Typography,
 } from '@material-ui/core';
-import { CodeBlock, dracula } from 'react-code-blocks';
 
 import { useOnboardingStyles } from '@/styles/onboarding-styles';
 
 import ExecutionProgress from '../components/ExecutionProgress';
+import SqlCodeBlock from '../components/SqlCodeBlock';
 import { seedDatabaseSQL } from '../constants/sql/databases-sql';
 import ApiServiceContext from '../contexts/api-service.context';
 
@@ -36,11 +36,7 @@ const SeedDatabaseStep: React.FC<SeedDatabaseStepProps> = ({ errored, loading, o
         className={classes.codeBlock}
         item
       >
-        <CodeBlock
-          text={seedDatabaseSQL}
-          language="sql"
-          theme={dracula}
-        />
+        <SqlCodeBlock text={seedDatabaseSQL} />
       </Grid>
       <Grid item>
         <Button
