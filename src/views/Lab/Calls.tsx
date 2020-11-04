@@ -91,28 +91,53 @@ const Calls: React.FC = () => {
 
     await apiService.callApi.deleteCall(selectedRow.call_id);
 
-    setSelectedRow(null);
+    await refetchCalls();
+  };
+
+  const restoreRow = async () => {
+    if (!selectedRow) return;
+
+    await apiService.callApi.restoreCall(selectedRow.call_id);
 
     await refetchCalls();
   };
 
-  const renderWarning = (): JSX.Element => (
-    <div className={globalClasses.editorForm}>
-      <Typography>
-        Calls can not be edited due to balance history integrity reasons
-      </Typography>
-      <Typography>
-        Though, calls can be soft-deleted for it to not apper in calls history
-      </Typography>
-      {selectedRow && <Button
-        variant="contained"
-        color="secondary"
-        onClick={deleteRow}
-      >
-        Delete
-      </Button>}
-    </div>
-  );
+  const renderWarning = (): JSX.Element => {
+    if (!selectedRow) return <></>;
+
+    const isDeleted = Boolean(selectedRow?.deleted_at);
+
+    return(
+      <div className={globalClasses.editorForm}>
+        <Typography variant="body1">
+          Calls can not be edited due to balance history integrity reasons
+        </Typography>
+        <Typography variant="body1">
+          Though, calls can be soft-deleted for it to not apper in calls history
+        </Typography>
+        {
+          isDeleted ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={restoreRow}
+            >
+              Restore
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={deleteRow}
+            >
+              Soft delete
+            </Button>
+          )
+        }
+      </div>
+    );
+  };
+
   const renderForm = (): JSX.Element => (
     <form
       className={globalClasses.editorForm}
@@ -271,13 +296,19 @@ const Calls: React.FC = () => {
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit call' : 'Create new call'}
-          {selectedRow && <IconButton
-            size="small"
-            onClick={() => setSelectedRow(null)}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>}
+          <Typography>
+            {selectedRow ? 'Edit call' : 'Create new call'}
+          </Typography>
+          {
+            selectedRow && (
+              <IconButton
+                size="small"
+                onClick={() => setSelectedRow(null)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )
+          }
         </div>
         {selectedRow ? renderWarning() : renderForm()}
       </div>

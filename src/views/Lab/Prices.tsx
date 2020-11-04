@@ -104,12 +104,16 @@ const Prices: React.FC = () => {
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
           {selectedRow ? 'Edit price' : 'Create new price'}
-          {selectedRow && <IconButton
-            size="small"
-            onClick={() => setSelectedRow(null)}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>}
+          {
+            selectedRow && (
+              <IconButton
+                size="small"
+                onClick={() => setSelectedRow(null)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )
+          }
         </div>
         <form
           className={globalClasses.editorForm}
@@ -172,13 +176,17 @@ const Prices: React.FC = () => {
             {selectedRow ? 'Edit' : 'Create'}
           </Button>
 
-          {selectedRow && <Button
-            variant="contained"
-            color="secondary"
-            onClick={deleteRow}
-          >
-            Delete
-          </Button>}
+          {
+            selectedRow && (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={deleteRow}
+              >
+                Delete
+              </Button>
+            )
+          }
         </form>
       </div>
     </>

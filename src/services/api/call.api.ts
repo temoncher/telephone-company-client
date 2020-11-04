@@ -20,4 +20,9 @@ export class CallApi extends ApiBase {
     method: 'DELETE',
     url: `${CALLS_API_ROOT}/${callId}`,
   });
+
+  restoreCall = (callId: number) => this.apiService.sendRequest<number>({
+    method: 'PUT',
+    url: `${CALLS_API_ROOT}/${callId}`,
+  });
 }

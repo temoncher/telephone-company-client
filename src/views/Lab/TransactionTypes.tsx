@@ -90,12 +90,16 @@ const TransactionTypes: React.FC = () => {
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
           {selectedRow ? 'Edit transaction type' : 'Create new transaction type'}
-          {selectedRow && <IconButton
-            size="small"
-            onClick={() => setSelectedRow(null)}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>}
+          {
+            selectedRow && (
+              <IconButton
+                size="small"
+                onClick={() => setSelectedRow(null)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )
+          }
         </div>
         <form
           className={globalClasses.editorForm}
@@ -121,13 +125,17 @@ const TransactionTypes: React.FC = () => {
             {selectedRow ? 'Edit' : 'Create'}
           </Button>
 
-          {selectedRow && <Button
-            variant="contained"
-            color="secondary"
-            onClick={deleteRow}
-          >
-            Delete
-          </Button>}
+          {
+            selectedRow && (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={deleteRow}
+              >
+                Delete
+              </Button>
+            )
+          }
         </form>
       </div>
     </>

@@ -210,12 +210,16 @@ const Transactions: React.FC = () => {
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
           {selectedRow ? 'Edit daytime price' : 'Create new transaction'}
-          {selectedRow && <IconButton
-            size="small"
-            onClick={() => setSelectedRow(null)}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>}
+          {
+            selectedRow && (
+              <IconButton
+                size="small"
+                onClick={() => setSelectedRow(null)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )
+          }
         </div>
         {selectedRow ? renderWarning() : renderForm()}
       </div>
