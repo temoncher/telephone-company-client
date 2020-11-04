@@ -5,8 +5,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import { AxiosError } from 'axios';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import Database from './views/Database';
 import Lab from './views/Lab/index';
+import Onboarding from './views/Onboarding';
 
 interface SqlError {
   errors: Record<string, string[]>;
@@ -79,7 +79,7 @@ const App: React.FC = () => {
           <Route
             exact
             path="/"
-            component={Database}
+            component={Onboarding}
           />
           <Route
             path="/lab"
