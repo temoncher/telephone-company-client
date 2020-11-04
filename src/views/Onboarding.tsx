@@ -31,12 +31,12 @@ const useStyles = makeStyles(() =>
     },
     codeBlock: {
       overflow: 'auto',
-      maxHeight: '48vh',
+      maxHeight: '40vh',
       maxWidth: '100%',
     },
     schema: {
       width: '100%',
-      maxHeight: '48vh',
+      maxHeight: '40vh',
     },
   }),
 );
