@@ -46,6 +46,7 @@ const Prices: React.FC = () => {
   const localities = localitiesData?.data;
   const columns: ColDef[] = createColumns(prices ? prices[0] : {});
   const rows = prices?.map((price, index) => ({ id: index, ...price }));
+  const values = control.getValues();
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -56,7 +57,13 @@ const Prices: React.FC = () => {
 
     const { id, price_id, ...fieldsToReset } = selectedRow;
 
-    reset({ ...stringifyObjectProperites(fieldsToReset) });
+    reset(
+      { ...stringifyObjectProperites(fieldsToReset) },
+      {
+        isValid: true,
+        isDirty: false,
+      },
+    );
   }, [selectedRow]);
 
   const handleSubmitClick = async (formData: PriceForm) => {
@@ -124,6 +131,7 @@ const Prices: React.FC = () => {
           name="title"
           label="Title*"
           variant="outlined"
+          InputLabelProps={{ shrink: Boolean(values.title) }}
           error={Boolean(errors.title)}
           helperText={errors.title ? 'Field is required' : ' '}
         />

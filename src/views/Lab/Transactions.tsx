@@ -47,6 +47,7 @@ const Transactions: React.FC = () => {
   const transactionTypes = transactionTypesData?.data;
   const columns: ColDef[] = createColumns(transactions ? transactions[0] : {});
   const rows = transactions?.map((transaction, index) => ({ id: index, ...transaction }));
+  const values = control.getValues();
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -57,7 +58,13 @@ const Transactions: React.FC = () => {
 
     const { id, transaction_id, ...fieldsToReset } = selectedRow;
 
-    reset({ ...stringifyObjectProperites(fieldsToReset) });
+    reset(
+      { ...stringifyObjectProperites(fieldsToReset) },
+      {
+        isValid: true,
+        isDirty: false,
+      },
+    );
   }, [selectedRow]);
 
   const handleSubmitClick = async (formData: TransactionForm) => {
@@ -173,6 +180,7 @@ const Transactions: React.FC = () => {
         name="amount"
         label="Amount*"
         variant="outlined"
+        InputLabelProps={{ shrink: Boolean(values.amount) }}
         error={Boolean(errors.amount)}
         helperText={errors.amount ? 'Field is required' : ' '}
       />

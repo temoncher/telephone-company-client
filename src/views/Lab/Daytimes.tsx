@@ -27,13 +27,14 @@ const defaultValues: DaytimeForm = {
 const Daytimes: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IDaytime & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset, formState } = useForm<DaytimeForm>({ defaultValues, mode: 'onChange' });
+  const { register, handleSubmit, errors, reset, control, formState } = useForm<DaytimeForm>({ defaultValues, mode: 'onChange' });
   const { data: daytimesData, refetch: refetchDaytimes } = useQuery('daytimes', apiService.daytimeApi.getAllDaytimes);
   const globalClasses = useGlobalStyles();
 
   const daytimes = daytimesData?.data;
   const columns: ColDef[] = createColumns(daytimes ? daytimes[0] : {});
   const rows = daytimes?.map((daytime, index) => ({ id: index, ...daytime }));
+  const values = control.getValues();
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -44,7 +45,13 @@ const Daytimes: React.FC = () => {
 
     const { id, daytime_id, ...fieldsToReset } = selectedRow;
 
-    reset({ ...fieldsToReset });
+    reset(
+      { ...fieldsToReset },
+      {
+        isValid: true,
+        isDirty: false,
+      },
+    );
   }, [selectedRow]);
 
   const handleSubmitClick = async (formData: DaytimeForm) => {
@@ -102,6 +109,7 @@ const Daytimes: React.FC = () => {
             name="title"
             label="Title*"
             variant="outlined"
+            InputLabelProps={{ shrink: Boolean(values.title) }}
             error={Boolean(errors.title)}
             helperText={errors.title ? 'Field is required' : ' '}
           />

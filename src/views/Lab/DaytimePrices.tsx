@@ -50,6 +50,7 @@ const DaytimePrices: React.FC = () => {
   const prices = pricesData?.data;
   const columns: ColDef[] = createColumns(daytimePrices ? daytimePrices[0] : {});
   const rows = daytimePrices?.map((daytimePrice, index) => ({ id: index, ...daytimePrice }));
+  const values = control.getValues();
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -60,7 +61,13 @@ const DaytimePrices: React.FC = () => {
 
     const { id, ...fieldsToReset } = selectedRow;
 
-    reset({ ...stringifyObjectProperites(fieldsToReset) });
+    reset(
+      { ...stringifyObjectProperites(fieldsToReset) },
+      {
+        isValid: true,
+        isDirty: false,
+      },
+    );
   }, [selectedRow]);
 
   const handleSubmitClick = async (formData: DaytimePriceForm) => {
@@ -130,21 +137,19 @@ const DaytimePrices: React.FC = () => {
           size="small"
         >
           <InputLabel id="daytime-label">
-        Daytime*
+            Daytime*
           </InputLabel>
           <Controller
             rules={{ required: true }}
-            as={
+            as={(
               <Select
                 labelId="daytime-label"
-                inputProps={{
-                  name: 'daytime_id',
-                }}
+                inputProps={{ name: 'daytime_id' }}
                 label="Locality"
                 error={Boolean(errors.daytime_id)}
               >
                 <MenuItem value="">
-              None
+                  None
                 </MenuItem>
                 {daytimes?.map((daytime) => (
                   <MenuItem
@@ -155,7 +160,7 @@ const DaytimePrices: React.FC = () => {
                   </MenuItem>
                 ))}
               </Select>
-            }
+            )}
             name="daytime_id"
             control={control}
             defaultValue=""
@@ -168,18 +173,18 @@ const DaytimePrices: React.FC = () => {
           size="small"
         >
           <InputLabel id="price-label">
-        Price*
+            Price*
           </InputLabel>
           <Controller
             rules={{ required: true }}
-            as={
+            as={(
               <Select
                 labelId="price-label"
                 label="Locality"
                 error={Boolean(errors.price_id)}
               >
                 <MenuItem value="">
-              None
+                  None
                 </MenuItem>
                 {prices?.map((price) => (
                   <MenuItem
@@ -190,7 +195,7 @@ const DaytimePrices: React.FC = () => {
                   </MenuItem>
                 ))}
               </Select>
-            }
+            )}
             name="price_id"
             control={control}
             defaultValue=""
@@ -204,6 +209,8 @@ const DaytimePrices: React.FC = () => {
           name="price_per_minute"
           label="Price per minute*"
           variant="outlined"
+          type="number"
+          InputLabelProps={{ shrink: Boolean(values.price_per_minute) }}
           error={Boolean(errors.price_per_minute)}
           helperText={errors.price_per_minute ? 'Field is required' : ' '}
         />
