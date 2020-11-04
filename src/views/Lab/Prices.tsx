@@ -9,6 +9,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Paper,
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -189,7 +190,7 @@ const Prices: React.FC = () => {
 
   return (
     <>
-      <div className={globalClasses.dataGrid}>
+      <Paper className={globalClasses.dataGrid}>
         {rows && (
           <DataGrid
             columns={columns}
@@ -199,10 +200,10 @@ const Prices: React.FC = () => {
         )}
 
         <DataGridFab onClick={() => setIsCodeShown(!isCodeShown)} />
-      </div>
-      <div className={globalClasses.editor}>
+      </Paper>
+      <Paper className={globalClasses.editor}>
         { isCodeShown ? renderCode() : renderEditor() }
-      </div>
+      </Paper>
     </>
   );
 };

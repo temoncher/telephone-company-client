@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   Typography,
+  Paper,
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -190,9 +191,7 @@ const Transactions: React.FC = () => {
 
   return (
     <>
-      <div
-        className={globalClasses.dataGrid}
-      >
+      <Paper className={globalClasses.dataGrid}>
         {rows && (
           <DataGrid
             columns={columns}
@@ -200,8 +199,8 @@ const Transactions: React.FC = () => {
             onRowClick={({ data }) => setSelectedRow(data as ITransaction & { id: number })}
           />
         )}
-      </div>
-      <div className={globalClasses.editor}>
+      </Paper>
+      <Paper className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
           {selectedRow ? 'Edit daytime price' : 'Create new transaction'}
           {selectedRow && (
@@ -214,7 +213,7 @@ const Transactions: React.FC = () => {
           )}
         </div>
         {selectedRow ? renderWarning() : renderForm()}
-      </div>
+      </Paper>
     </>
   );
 };

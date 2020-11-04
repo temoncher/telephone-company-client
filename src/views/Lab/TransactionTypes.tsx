@@ -4,6 +4,7 @@ import {
   Button,
   IconButton,
   TextField,
+  Paper,
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -71,9 +72,7 @@ const TransactionTypes: React.FC = () => {
 
   return (
     <>
-      <div
-        className={globalClasses.dataGrid}
-      >
+      <Paper className={globalClasses.dataGrid}>
         {rows && (
           <DataGrid
             columns={columns}
@@ -81,8 +80,8 @@ const TransactionTypes: React.FC = () => {
             onRowClick={({ data }) => setSelectedRow(data as ITransactionType & { id: number })}
           />
         )}
-      </div>
-      <div className={globalClasses.editor}>
+      </Paper>
+      <Paper className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
           {selectedRow ? 'Edit transaction type' : 'Create new transaction type'}
           {selectedRow && (
@@ -127,7 +126,7 @@ const TransactionTypes: React.FC = () => {
             </Button>
           )}
         </form>
-      </div>
+      </Paper>
     </>
   );
 };

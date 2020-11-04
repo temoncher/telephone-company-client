@@ -11,7 +11,6 @@ export const useGlobalStyles = makeStyles((theme: Theme) => ({
     borderRadius: 4,
     border: '1px solid rgba(224, 224, 224, 1)',
     width: '34%',
-    height: '100%',
     '& > *': {
       padding: theme.spacing(2),
     },

@@ -9,6 +9,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Paper,
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -90,9 +91,7 @@ const Subscribers: React.FC = () => {
 
   return (
     <>
-      <div
-        className={globalClasses.dataGrid}
-      >
+      <Paper className={globalClasses.dataGrid}>
         {rows && (
           <DataGrid
             columns={columns}
@@ -100,8 +99,8 @@ const Subscribers: React.FC = () => {
             onRowClick={({ data }) => setSelectedRow(data as ISubscriber & { id: number })}
           />
         )}
-      </div>
-      <div className={globalClasses.editor}>
+      </Paper>
+      <Paper className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
           {selectedRow ? 'Edit subscriber' : 'Create new subscriber'}
           {selectedRow && (
@@ -219,7 +218,7 @@ const Subscribers: React.FC = () => {
             </Button>
           )}
         </form>
-      </div>
+      </Paper>
     </>
   );
 };

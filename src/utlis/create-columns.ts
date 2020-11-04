@@ -16,14 +16,14 @@ export const createColumns = <T extends object>(tableEntity: T): ColDef[] => Obj
   })
   .map(([headerName, field, value]) => {
     const widthByHeaderName = headerName.length * 12;
-    const numberTypeWidth = widthByHeaderName > DefatultWidth.NUMBERS ? widthByHeaderName : DefatultWidth.NUMBERS;
-    const stringTypeWidth = widthByHeaderName > DefatultWidth.STRINGS ? widthByHeaderName : DefatultWidth.STRINGS;
+    const defaultWidth = typeof value === 'string' ? DefatultWidth.STRINGS : DefatultWidth.NUMBERS;
+    const width = widthByHeaderName > defaultWidth ? widthByHeaderName : defaultWidth;
 
     return {
       headerName,
       field,
+      width,
       sortable: false,
-      width: typeof value === 'string' ? stringTypeWidth : numberTypeWidth,
       type: typeof value,
     };
   });

@@ -4,6 +4,7 @@ import {
   Button,
   IconButton,
   TextField,
+  Paper,
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -71,7 +72,7 @@ const Organisations: React.FC = () => {
 
   return (
     <>
-      <div
+      <Paper
         className={globalClasses.dataGrid}
       >
         {rows && (
@@ -82,8 +83,8 @@ const Organisations: React.FC = () => {
           />
         )}
 
-      </div>
-      <div className={globalClasses.editor}>
+      </Paper>
+      <Paper className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
           {selectedRow ? 'Edit organisation' : 'Create new organisation'}
           {selectedRow && (
@@ -128,7 +129,7 @@ const Organisations: React.FC = () => {
             </Button>
           )}
         </form>
-      </div>
+      </Paper>
     </>
   );
 };
