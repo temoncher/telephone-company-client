@@ -13,8 +13,8 @@ import SchemaSrc from '../assets/DBSchema.png';
 const useStyles = makeStyles(() =>
   createStyles({
     schema: {
-      width: '100%',
-      maxHeight: '50vh',
+      width: 'auto',
+      maxHeight: '40vh',
     },
   }),
 );

@@ -176,7 +176,8 @@ INSERT
     SUM(CASE WHEN [transaction_types].[title] = 'LOSS' THEN [INSERTED].[amount] ELSE 0 END) [loss]
   FROM
     [INSERTED]
-    JOIN [transaction_types] ON [INSERTED].[transaction_type_id] = [transaction_types].[transaction_type_id]
+    JOIN [transaction_types]
+    ON [INSERTED].[transaction_type_id] = [transaction_types].[transaction_type_id]
   GROUP BY [INSERTED].[account_id]
 
   UPDATE
@@ -192,6 +193,16 @@ INSERT
   FROM @newInserted
   )
 END;
+`;
+export const softDeleteCallTriggerSQL = `CREATE TRIGGER [TR_calls_InsteadOfDelete] ON [calls]
+INSTEAD OF DELETE
+AS BEGIN
+SET NOCOUNT ON;
+
+UPDATE [calls]
+  SET [deleted_at] = CURRENT_TIMESTAMP
+  WHERE [call_id] IN (SELECT [call_id] FROM [DELETED]);
+END
 `;
 export const createTransactionAfterCallTriggerSQL = `-- Add account for each new subscriber
 CREATE TRIGGER [TR_calls_AfterInsert] ON [calls]
