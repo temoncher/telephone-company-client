@@ -91,6 +91,8 @@ const Calls: React.FC = () => {
 
     await apiService.callApi.deleteCall(selectedRow.call_id);
 
+    setSelectedRow(null);
+
     await refetchCalls();
   };
 
@@ -98,6 +100,8 @@ const Calls: React.FC = () => {
     if (!selectedRow) return;
 
     await apiService.callApi.restoreCall(selectedRow.call_id);
+
+    setSelectedRow(null);
 
     await refetchCalls();
   };
