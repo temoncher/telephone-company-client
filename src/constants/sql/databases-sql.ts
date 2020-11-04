@@ -196,7 +196,8 @@ INSERT
   )
 END;
 `;
-export const softDeleteCallTriggerSQL = `CREATE TRIGGER [TR_calls_InsteadOfDelete] ON [calls]
+export const softDeleteCallTriggerSQL = `-- Soft delete call
+CREATE TRIGGER [TR_calls_InsteadOfDelete] ON [calls]
 INSTEAD OF DELETE
 AS BEGIN
 SET NOCOUNT ON;
@@ -206,7 +207,7 @@ UPDATE [calls]
   WHERE [call_id] IN (SELECT [call_id] FROM [DELETED]);
 END
 `;
-export const createTransactionAfterCallTriggerSQL = `-- Add account for each new subscriber
+export const createTransactionAfterCallTriggerSQL = `-- Add transaction for inserted call
 CREATE TRIGGER [TR_calls_AfterInsert] ON [calls]
 AFTER
 INSERT
@@ -239,28 +240,33 @@ INSERT
   DECLARE @insertedWithAmount TABLE(
     [account_id] INT NOT NULL,
     [transaction_type_id] INT NOT NULL,
-    [amount] DOUBLE PRECISION NOT NULL
+    [amount] SMALLMONEY NOT NULL
   );
 
   INSERT INTO @insertedWithAccountId
   SELECT [locality_id], [daytime_id], [duration], [account_id]
   FROM [INSERTED]
-    JOIN [accounts] ON [INSERTED].[subscriber_id] = [accounts].[subscriber_id]
+    JOIN [accounts]
+    ON [INSERTED].[subscriber_id] = [accounts].[subscriber_id]
 
   INSERT INTO @insertedWithTransactionTypeId
   SELECT [locality_id], [daytime_id], [duration], [account_id], [transaction_type_id]
   FROM @insertedWithAccountId
-    JOIN [transaction_types] ON [transaction_types].[title] = 'LOSS'
+    JOIN [transaction_types]
+    ON [transaction_types].[title] = 'LOSS'
 
   INSERT INTO @insertedWithPriceId
   SELECT [daytime_id], [duration], [account_id], [transaction_type_id], [price_id]
   FROM @insertedWithTransactionTypeId
-    JOIN [prices] ON [prices].[locality_id] = [@insertedWithTransactionTypeId].[locality_id]
+    JOIN [prices]
+    ON [prices].[locality_id] = [@insertedWithTransactionTypeId].[locality_id]
 
   INSERT INTO @insertedWithAmount
-  SELECT [account_id], [transaction_type_id], [amount] = CAST([duration] AS FLOAT) / 60 * [price_per_minute]
+  SELECT [account_id], [transaction_type_id], [amount] = CAST([duration] AS REAL) / 60 * [price_per_minute]
   FROM @insertedWithPriceId
-    JOIN [daytime_prices] ON [daytime_prices].[price_id] = [@insertedWithPriceId].[price_id] AND [daytime_prices].[daytime_id] = [@insertedWithPriceId].[daytime_id]
+    JOIN [daytime_prices]
+    ON [daytime_prices].[price_id] = [@insertedWithPriceId].[price_id]
+      AND [daytime_prices].[daytime_id] = [@insertedWithPriceId].[daytime_id]
 
   INSERT INTO [transactions]
     ([account_id], [transaction_type_id], [amount])
