@@ -148,10 +148,7 @@ const Calls: React.FC = () => {
         variant="outlined"
         size="small"
       >
-        <InputLabel
-          id="locality-label"
-          shrink={true}
-        >
+        <InputLabel id="locality-label">
           Locality*
         </InputLabel>
         <Controller
@@ -165,6 +162,9 @@ const Calls: React.FC = () => {
               label="Account"
               error={Boolean(errors.locality_id)}
             >
+              <MenuItem value="">
+                None
+              </MenuItem>
               {localities?.map((locality) => (
                 <MenuItem
                   key={`locality_${locality.locality_id}`}
@@ -186,10 +186,7 @@ const Calls: React.FC = () => {
         variant="outlined"
         size="small"
       >
-        <InputLabel
-          id="subscriber-label"
-          shrink={true}
-        >
+        <InputLabel id="subscriber-label">
           Subscriber*
         </InputLabel>
         <Controller
@@ -203,6 +200,9 @@ const Calls: React.FC = () => {
               label="Account"
               error={Boolean(errors.subscriber_id)}
             >
+              <MenuItem value="">
+                None
+              </MenuItem>
               {subscribers?.map((subscriber) => (
                 <MenuItem
                   key={`subscriber_${subscriber.subscriber_id}`}
@@ -224,10 +224,7 @@ const Calls: React.FC = () => {
         variant="outlined"
         size="small"
       >
-        <InputLabel
-          id="daytime-label"
-          shrink={true}
-        >
+        <InputLabel id="daytime-label">
           Daytime*
         </InputLabel>
         <Controller
@@ -241,6 +238,9 @@ const Calls: React.FC = () => {
               label="Account"
               error={Boolean(errors.daytime_id)}
             >
+              <MenuItem value="">
+                None
+              </MenuItem>
               {daytimes?.map((daytime) => (
                 <MenuItem
                   key={`daytime_${daytime.daytime_id}`}
@@ -264,7 +264,6 @@ const Calls: React.FC = () => {
         name="duration"
         label="Duration*"
         variant="outlined"
-        InputLabelProps={{ shrink: true }}
         error={Boolean(errors.duration)}
         helperText={errors.duration ? 'Field is required' : ' '}
       />

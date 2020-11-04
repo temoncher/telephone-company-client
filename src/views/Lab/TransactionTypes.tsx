@@ -104,7 +104,6 @@ const TransactionTypes: React.FC = () => {
             name="title"
             label="Title*"
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
             error={Boolean(errors.title)}
             helperText={errors.title ? 'Field is required' : ' '}
           />

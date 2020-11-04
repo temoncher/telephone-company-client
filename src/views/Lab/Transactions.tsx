@@ -95,10 +95,7 @@ const Transactions: React.FC = () => {
         variant="outlined"
         size="small"
       >
-        <InputLabel
-          id="account-label"
-          shrink={true}
-        >
+        <InputLabel id="account-label">
           Account*
         </InputLabel>
         <Controller
@@ -112,6 +109,9 @@ const Transactions: React.FC = () => {
               label="Account"
               error={Boolean(errors.account_id)}
             >
+              <MenuItem value="">
+                None
+              </MenuItem>
               {accounts?.map((account) => (
                 <MenuItem
                   key={`${account.subscriber_id}_${account.account_id}`}
@@ -133,10 +133,7 @@ const Transactions: React.FC = () => {
         variant="outlined"
         size="small"
       >
-        <InputLabel
-          id="transactionType-label"
-          shrink={true}
-        >
+        <InputLabel id="transactionType-label">
           Transaction type*
         </InputLabel>
         <Controller
@@ -150,6 +147,9 @@ const Transactions: React.FC = () => {
               label="Account"
               error={Boolean(errors.transaction_type_id)}
             >
+              <MenuItem value="">
+                None
+              </MenuItem>
               {transactionTypes?.map((transactionType) => (
                 <MenuItem
                   key={transactionType.title}
@@ -173,7 +173,6 @@ const Transactions: React.FC = () => {
         name="amount"
         label="Amount*"
         variant="outlined"
-        InputLabelProps={{ shrink: true }}
         error={Boolean(errors.amount)}
         helperText={errors.amount ? 'Field is required' : ' '}
       />

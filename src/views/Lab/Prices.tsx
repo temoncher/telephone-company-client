@@ -126,7 +126,6 @@ const Prices: React.FC = () => {
           name="title"
           label="Title*"
           variant="outlined"
-          InputLabelProps={{ shrink: true }}
           error={Boolean(errors.title)}
           helperText={errors.title ? 'Field is required' : ' '}
         />
@@ -134,10 +133,7 @@ const Prices: React.FC = () => {
           variant="outlined"
           size="small"
         >
-          <InputLabel
-            id="locality-label"
-            shrink={true}
-          >
+          <InputLabel id="locality-label">
             Locality*
           </InputLabel>
           <Controller
@@ -151,6 +147,9 @@ const Prices: React.FC = () => {
                 label="Locality"
                 error={Boolean(errors.locality_id)}
               >
+                <MenuItem value="">
+                  None
+                </MenuItem>
                 {localities?.map((locality) => (
                   <MenuItem
                     key={locality.name}

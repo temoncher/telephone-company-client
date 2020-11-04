@@ -122,10 +122,7 @@ const DaytimePrices: React.FC = () => {
             variant="outlined"
             size="small"
           >
-            <InputLabel
-              id="daytime-label"
-              shrink={true}
-            >
+            <InputLabel id="daytime-label">
               Daytime*
             </InputLabel>
             <Controller
@@ -139,6 +136,9 @@ const DaytimePrices: React.FC = () => {
                   label="Locality"
                   error={Boolean(errors.daytime_id)}
                 >
+                  <MenuItem value="">
+                    None
+                  </MenuItem>
                   {daytimes?.map((daytime) => (
                     <MenuItem
                       key={daytime.title}
@@ -160,10 +160,7 @@ const DaytimePrices: React.FC = () => {
             variant="outlined"
             size="small"
           >
-            <InputLabel
-              id="price-label"
-              shrink={true}
-            >
+            <InputLabel id="price-label">
               Price*
             </InputLabel>
             <Controller
@@ -174,6 +171,9 @@ const DaytimePrices: React.FC = () => {
                   label="Locality"
                   error={Boolean(errors.price_id)}
                 >
+                  <MenuItem value="">
+                    None
+                  </MenuItem>
                   {prices?.map((price) => (
                     <MenuItem
                       key={price.title}
@@ -197,7 +197,6 @@ const DaytimePrices: React.FC = () => {
             name="price_per_minute"
             label="Price per minute*"
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
             error={Boolean(errors.price_per_minute)}
             helperText={errors.price_per_minute ? 'Field is required' : ' '}
           />
