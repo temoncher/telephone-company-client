@@ -1,5 +1,10 @@
 import { ColDef } from '@material-ui/data-grid';
 
+enum DefatultWidth {
+  NUMBERS = 75,
+  STRINGS = 200,
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const createColumns = <T extends object>(tableEntity: T): ColDef[] => Object.entries(tableEntity)
   .filter(([key]) => !key.endsWith('_id'))
@@ -9,10 +14,15 @@ export const createColumns = <T extends object>(tableEntity: T): ColDef[] => Obj
 
     return [readableKey, key, value] as [string, string, typeof value];
   })
-  .map(([headerName, field, value]) => ({
-    headerName,
-    field,
-    sortable: false,
-    width: typeof value === 'string' ? 200 : headerName.length * 10,
-    type: typeof value === 'string' ? 'string' : 'number',
-  }));
+  .map(([headerName, field, value]) => {
+    const widthByHeaderName = headerName.length * 10;
+    const numberTypeWidth = widthByHeaderName > DefatultWidth.NUMBERS ? widthByHeaderName : DefatultWidth.NUMBERS;
+
+    return {
+      headerName,
+      field,
+      sortable: false,
+      width: typeof value === 'string' ? DefatultWidth.STRINGS : numberTypeWidth,
+      type: typeof value,
+    };
+  });
