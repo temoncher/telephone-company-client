@@ -1,7 +1,7 @@
 import { ColDef } from '@material-ui/data-grid';
 
 enum DefatultWidth {
-  NUMBERS = 75,
+  NUMBERS = 100,
   STRINGS = 200,
 }
 
@@ -15,14 +15,15 @@ export const createColumns = <T extends object>(tableEntity: T): ColDef[] => Obj
     return [readableKey, key, value] as [string, string, typeof value];
   })
   .map(([headerName, field, value]) => {
-    const widthByHeaderName = headerName.length * 10;
+    const widthByHeaderName = headerName.length * 12;
     const numberTypeWidth = widthByHeaderName > DefatultWidth.NUMBERS ? widthByHeaderName : DefatultWidth.NUMBERS;
+    const stringTypeWidth = widthByHeaderName > DefatultWidth.STRINGS ? widthByHeaderName : DefatultWidth.STRINGS;
 
     return {
       headerName,
       field,
       sortable: false,
-      width: typeof value === 'string' ? DefatultWidth.STRINGS : numberTypeWidth,
+      width: typeof value === 'string' ? stringTypeWidth : numberTypeWidth,
       type: typeof value,
     };
   });
