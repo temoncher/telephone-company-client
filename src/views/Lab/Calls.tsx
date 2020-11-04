@@ -284,31 +284,27 @@ const Calls: React.FC = () => {
       <div
         className={globalClasses.dataGrid}
       >
-        {
-          rows &&
-        <DataGrid
-          columns={columns}
-          rows={rows}
-          onRowClick={({ data }) => setSelectedRow(data as ICall & { id: number })}
-        />
-        }
-
+        {rows && (
+          <DataGrid
+            columns={columns}
+            rows={rows}
+            onRowClick={({ data }) => setSelectedRow(data as ICall & { id: number })}
+          />
+        )}
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
           <Typography>
             {selectedRow ? 'Edit call' : 'Create new call'}
           </Typography>
-          {
-            selectedRow && (
-              <IconButton
-                size="small"
-                onClick={() => setSelectedRow(null)}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            )
-          }
+          {selectedRow && (
+            <IconButton
+              size="small"
+              onClick={() => setSelectedRow(null)}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          )}
         </div>
         {selectedRow ? renderWarning() : renderForm()}
       </div>

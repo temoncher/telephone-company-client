@@ -96,29 +96,25 @@ const Subscribers: React.FC = () => {
       <div
         className={globalClasses.dataGrid}
       >
-        {
-          rows &&
-        <DataGrid
-          columns={columns}
-          rows={rows}
-          onRowClick={({ data }) => setSelectedRow(data as ISubscriber & { id: number })}
-        />
-        }
-
+        {rows && (
+          <DataGrid
+            columns={columns}
+            rows={rows}
+            onRowClick={({ data }) => setSelectedRow(data as ISubscriber & { id: number })}
+          />
+        )}
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
           {selectedRow ? 'Edit subscriber' : 'Create new subscriber'}
-          {
-            selectedRow && (
-              <IconButton
-                size="small"
-                onClick={() => setSelectedRow(null)}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            )
-          }
+          {selectedRow && (
+            <IconButton
+              size="small"
+              onClick={() => setSelectedRow(null)}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          )}
         </div>
         <form
           className={globalClasses.editorForm}
@@ -221,17 +217,15 @@ const Subscribers: React.FC = () => {
             {selectedRow ? 'Edit' : 'Create'}
           </Button>
 
-          {
-            selectedRow && (
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={deleteRow}
-              >
-                Delete
-              </Button>
-            )
-          }
+          {selectedRow && (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={deleteRow}
+            >
+              Delete
+            </Button>
+          )}
         </form>
       </div>
     </>

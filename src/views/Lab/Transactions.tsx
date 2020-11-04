@@ -197,29 +197,25 @@ const Transactions: React.FC = () => {
       <div
         className={globalClasses.dataGrid}
       >
-        {
-          rows &&
-        <DataGrid
-          columns={columns}
-          rows={rows}
-          onRowClick={({ data }) => setSelectedRow(data as ITransaction & { id: number })}
-        />
-        }
-
+        {rows && (
+          <DataGrid
+            columns={columns}
+            rows={rows}
+            onRowClick={({ data }) => setSelectedRow(data as ITransaction & { id: number })}
+          />
+        )}
       </div>
       <div className={globalClasses.editor}>
         <div className={globalClasses.editorHeader}>
           {selectedRow ? 'Edit daytime price' : 'Create new transaction'}
-          {
-            selectedRow && (
-              <IconButton
-                size="small"
-                onClick={() => setSelectedRow(null)}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            )
-          }
+          {selectedRow && (
+            <IconButton
+              size="small"
+              onClick={() => setSelectedRow(null)}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          )}
         </div>
         {selectedRow ? renderWarning() : renderForm()}
       </div>
