@@ -58,13 +58,7 @@ const Subscribers: React.FC = () => {
 
     const { id, subscriber_id, ...fieldsToReset } = selectedRow;
 
-    reset(
-      { ...stringifyObjectProperites(fieldsToReset) },
-      {
-        isValid: true,
-        isDirty: false,
-      },
-    );
+    reset({ ...stringifyObjectProperites(fieldsToReset) });
   }, [selectedRow]);
 
   const handleSubmitClick = async (formData: SubscriberForm) => {

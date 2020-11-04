@@ -45,13 +45,7 @@ const TransactionTypes: React.FC = () => {
 
     const { id, transaction_type_id, ...fieldsToReset } = selectedRow;
 
-    reset(
-      { ...fieldsToReset },
-      {
-        isValid: true,
-        isDirty: false,
-      },
-    );
+    reset({ ...fieldsToReset });
   }, [selectedRow]);
 
   const handleSubmitClick = async (formData: TransactionTypeForm) => {

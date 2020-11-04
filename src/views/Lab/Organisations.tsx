@@ -45,13 +45,7 @@ const Organisations: React.FC = () => {
 
     const { id, organisation_id, ...fieldsToReset } = selectedRow;
 
-    reset(
-      { ...fieldsToReset },
-      {
-        isValid: true,
-        isDirty: false,
-      },
-    );
+    reset({ ...fieldsToReset });
   }, [selectedRow]);
 
   const handleSubmitClick = async (formData: OrganisationForm) => {

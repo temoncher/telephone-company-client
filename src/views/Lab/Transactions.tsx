@@ -58,13 +58,7 @@ const Transactions: React.FC = () => {
 
     const { id, transaction_id, ...fieldsToReset } = selectedRow;
 
-    reset(
-      { ...stringifyObjectProperites(fieldsToReset) },
-      {
-        isValid: true,
-        isDirty: false,
-      },
-    );
+    reset({ ...stringifyObjectProperites(fieldsToReset) });
   }, [selectedRow]);
 
   const handleSubmitClick = async (formData: TransactionForm) => {

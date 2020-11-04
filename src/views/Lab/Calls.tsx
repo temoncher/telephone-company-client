@@ -60,13 +60,7 @@ const Calls: React.FC = () => {
 
     const { id, call_id, ...fieldsToReset } = selectedRow;
 
-    reset(
-      { ...stringifyObjectProperites(fieldsToReset) },
-      {
-        isValid: true,
-        isDirty: false,
-      },
-    );
+    reset({ ...stringifyObjectProperites(fieldsToReset) });
   }, [selectedRow]);
 
   const handleSubmitClick = async (formData: CallForm) => {
