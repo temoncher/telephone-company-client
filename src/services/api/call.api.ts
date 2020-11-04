@@ -10,9 +10,14 @@ export class CallApi extends ApiBase {
     url: `${CALLS_API_ROOT}`,
   });
 
-  createCall = (call: Omit<ICall, 'call_id' | 'timestamp'>) => this.apiService.sendRequest<number>({
+  createCall = (call: Omit<ICall, 'call_id' | 'timestamp' | 'deleted_at'>) => this.apiService.sendRequest<number>({
     method: 'POST',
     url: `${CALLS_API_ROOT}`,
     data: call,
+  });
+
+  deleteCall = (callId: number) => this.apiService.sendRequest<number>({
+    method: 'DELETE',
+    url: `${CALLS_API_ROOT}/${callId}`,
   });
 }

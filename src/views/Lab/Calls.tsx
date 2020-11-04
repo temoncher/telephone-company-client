@@ -9,6 +9,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Typography,
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -22,7 +23,7 @@ import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
-type CallForm = Stringified<Omit<Stringified<ICall>, 'call_id' | 'timestamp'>>;
+type CallForm = Stringified<Omit<Stringified<ICall>, 'call_id' | 'timestamp' | 'deleted_at'>>;
 
 const defaultValues: CallForm = {
   duration: '',
@@ -66,7 +67,7 @@ const Calls: React.FC = () => {
   }, [selectedRow]);
 
   const handleSubmitClick = async (formData: CallForm) => {
-    const validCall: Omit<ICall, 'call_id' | 'timestamp'> = {
+    const validCall: Omit<ICall, 'call_id' | 'timestamp' | 'deleted_at'> = {
       ...formData,
       subscriber_id: Number(formData.subscriber_id),
       locality_id: Number(formData.locality_id),
@@ -85,9 +86,31 @@ const Calls: React.FC = () => {
     await refetchCalls();
   };
 
+  const deleteRow = async () => {
+    if (!selectedRow) return;
+
+    await apiService.callApi.deleteCall(selectedRow.call_id);
+
+    setSelectedRow(null);
+
+    await refetchCalls();
+  };
+
   const renderWarning = (): JSX.Element => (
     <div className={globalClasses.editorForm}>
-      Calls can not be edited or deleted due to security reasons
+      <Typography>
+        Calls can not be edited due to balance history integrity reasons
+      </Typography>
+      <Typography>
+        Though, calls can be soft-deleted for it to not apper in calls history
+      </Typography>
+      {selectedRow && <Button
+        variant="contained"
+        color="secondary"
+        onClick={deleteRow}
+      >
+        Delete
+      </Button>}
     </div>
   );
   const renderForm = (): JSX.Element => (

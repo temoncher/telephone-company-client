@@ -9,6 +9,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Typography,
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -83,7 +84,9 @@ const Transactions: React.FC = () => {
 
   const renderWarning = (): JSX.Element => (
     <div className={globalClasses.editorForm}>
-      Transactions can not be edited or deleted due to security reasons
+      <Typography>
+        Transactions can not be edited nor deleted due to balance history integrity reasons
+      </Typography>
     </div>
   );
   const renderForm = (): JSX.Element => (
