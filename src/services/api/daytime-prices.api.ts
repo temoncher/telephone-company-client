@@ -1,4 +1,5 @@
 import { IDaytimePrice } from '@/interfaces/daytime-price.interface';
+import { IDaytimePriceView } from '@/interfaces/views/daytime-price-view.interface';
 
 import { ApiBase } from './api-base';
 
@@ -8,6 +9,11 @@ export class DaytimePriceApi extends ApiBase {
   getAllDaytimePrices = () => this.apiService.sendRequest<IDaytimePrice[]>({
     method: 'GET',
     url: `${DAYTIME_PRICES_API_ROOT}`,
+  });
+
+  getDaytimePricesTable = () => this.apiService.sendRequest<IDaytimePriceView[]>({
+    method: 'GET',
+    url: `${DAYTIME_PRICES_API_ROOT}/table`,
   });
 
   createDaytimePrice = (daytimePrice: IDaytimePrice) => this.apiService.sendRequest<number>({

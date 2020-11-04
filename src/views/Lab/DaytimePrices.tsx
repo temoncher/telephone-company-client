@@ -15,6 +15,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
+import DataGridFab from '@/components/DataGridFab';
+import SqlCodeBlock from '@/components/SqlCodeBlock';
+import { daytimePricesTableSql } from '@/constants/sql/views-sql.ts';
 import { IDaytimePrice } from '@/interfaces/daytime-price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
@@ -34,8 +37,9 @@ const defaultValues: DaytimePriceForm = {
 const DaytimePrices: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IDaytimePrice & { id: number } | null>(null);
+  const [isCodeShown, setIsCodeShown] = React.useState(false);
   const { register, handleSubmit, errors, reset, control } = useForm<DaytimePriceForm>({ defaultValues });
-  const { data: daytimePricesData, refetch: refetchDaytimePrices } = useQuery('daytimePrices', apiService.daytimePriceApi.getAllDaytimePrices);
+  const { data: daytimePricesData, refetch: refetchDaytimePrices } = useQuery('daytimePrices', apiService.daytimePriceApi.getDaytimePricesTable);
   const { data: daytimesData } = useQuery('daytimes', apiService.daytimeApi.getAllDaytimes);
   const { data: pricesData } = useQuery('prices', apiService.priceApi.getAllPrices);
   const globalClasses = useGlobalStyles();
@@ -89,6 +93,143 @@ const DaytimePrices: React.FC = () => {
     await refetchDaytimePrices();
   };
 
+  const renderCode = () => (
+    <>
+      <div className={globalClasses.editorHeader}>
+        <div>Daytime prices view code</div>
+        <IconButton
+          size="small"
+          onClick={() => setIsCodeShown(false)}
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </div>
+      <SqlCodeBlock text={daytimePricesTableSql} />
+    </>
+  );
+
+  const renderEditor = () => (
+    <>
+      <div className={globalClasses.editorHeader}>
+        {selectedRow ? 'Edit daytime price' : 'Create new daytime price'}
+        {selectedRow && (
+          <IconButton
+            size="small"
+            onClick={() => setSelectedRow(null)}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        )}
+      </div>
+      <form
+        className={globalClasses.editorForm}
+        onSubmit={handleSubmit(handleSubmitClick)}
+      >
+        <FormControl
+          variant="outlined"
+          size="small"
+        >
+          <InputLabel id="daytime-label">
+        Daytime*
+          </InputLabel>
+          <Controller
+            rules={{ required: true }}
+            as={
+              <Select
+                labelId="daytime-label"
+                inputProps={{
+                  name: 'daytime_id',
+                }}
+                label="Locality"
+                error={Boolean(errors.daytime_id)}
+              >
+                <MenuItem value="">
+              None
+                </MenuItem>
+                {daytimes?.map((daytime) => (
+                  <MenuItem
+                    key={daytime.title}
+                    value={daytime.daytime_id}
+                  >
+                    {daytime.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            }
+            name="daytime_id"
+            control={control}
+            defaultValue=""
+          />
+          <FormHelperText error={true}>{errors.daytime_id ? 'Field is required' : ' '}</FormHelperText>
+        </FormControl>
+
+        <FormControl
+          variant="outlined"
+          size="small"
+        >
+          <InputLabel id="price-label">
+        Price*
+          </InputLabel>
+          <Controller
+            rules={{ required: true }}
+            as={
+              <Select
+                labelId="price-label"
+                label="Locality"
+                error={Boolean(errors.price_id)}
+              >
+                <MenuItem value="">
+              None
+                </MenuItem>
+                {prices?.map((price) => (
+                  <MenuItem
+                    key={price.title}
+                    value={price.price_id}
+                  >
+                    {price.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            }
+            name="price_id"
+            control={control}
+            defaultValue=""
+          />
+          <FormHelperText error={true}>{errors.price_id ? 'Field is required' : ' '}</FormHelperText>
+        </FormControl>
+
+        <TextField
+          inputRef={register({ required: true })}
+          size="small"
+          name="price_per_minute"
+          label="Price per minute*"
+          variant="outlined"
+          error={Boolean(errors.price_per_minute)}
+          helperText={errors.price_per_minute ? 'Field is required' : ' '}
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={!isFormValid}
+        >
+          {selectedRow ? 'Edit' : 'Create'}
+        </Button>
+
+        {selectedRow && (
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={deleteRow}
+          >
+        Delete
+          </Button>
+        )}
+      </form>
+    </>
+  );
+
   return (
     <>
       <div
@@ -101,125 +242,11 @@ const DaytimePrices: React.FC = () => {
             onRowClick={({ data }) => setSelectedRow(data as IDaytimePrice & { id: number })}
           />
         )}
+
+        <DataGridFab onClick={() => setIsCodeShown(!isCodeShown)} />
       </div>
       <div className={globalClasses.editor}>
-        <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit daytime price' : 'Create new daytime price'}
-          {selectedRow && (
-            <IconButton
-              size="small"
-              onClick={() => setSelectedRow(null)}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          )}
-        </div>
-        <form
-          className={globalClasses.editorForm}
-          onSubmit={handleSubmit(handleSubmitClick)}
-        >
-          <FormControl
-            variant="outlined"
-            size="small"
-          >
-            <InputLabel id="daytime-label">
-              Daytime*
-            </InputLabel>
-            <Controller
-              rules={{ required: true }}
-              as={
-                <Select
-                  labelId="daytime-label"
-                  inputProps={{
-                    name: 'daytime_id',
-                  }}
-                  label="Locality"
-                  error={Boolean(errors.daytime_id)}
-                >
-                  <MenuItem value="">
-                    None
-                  </MenuItem>
-                  {daytimes?.map((daytime) => (
-                    <MenuItem
-                      key={daytime.title}
-                      value={daytime.daytime_id}
-                    >
-                      {daytime.title}
-                    </MenuItem>
-                  ))}
-                </Select>
-              }
-              name="daytime_id"
-              control={control}
-              defaultValue=""
-            />
-            <FormHelperText error={true}>{errors.daytime_id ? 'Field is required' : ' '}</FormHelperText>
-          </FormControl>
-
-          <FormControl
-            variant="outlined"
-            size="small"
-          >
-            <InputLabel id="price-label">
-              Price*
-            </InputLabel>
-            <Controller
-              rules={{ required: true }}
-              as={
-                <Select
-                  labelId="price-label"
-                  label="Locality"
-                  error={Boolean(errors.price_id)}
-                >
-                  <MenuItem value="">
-                    None
-                  </MenuItem>
-                  {prices?.map((price) => (
-                    <MenuItem
-                      key={price.title}
-                      value={price.price_id}
-                    >
-                      {price.title}
-                    </MenuItem>
-                  ))}
-                </Select>
-              }
-              name="price_id"
-              control={control}
-              defaultValue=""
-            />
-            <FormHelperText error={true}>{errors.price_id ? 'Field is required' : ' '}</FormHelperText>
-          </FormControl>
-
-          <TextField
-            inputRef={register({ required: true })}
-            size="small"
-            name="price_per_minute"
-            label="Price per minute*"
-            variant="outlined"
-            error={Boolean(errors.price_per_minute)}
-            helperText={errors.price_per_minute ? 'Field is required' : ' '}
-          />
-
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!isFormValid}
-          >
-            {selectedRow ? 'Edit' : 'Create'}
-          </Button>
-
-          {selectedRow && (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={deleteRow}
-            >
-              Delete
-            </Button>
-          )}
-        </form>
+        { isCodeShown ? renderCode() : renderEditor() }
       </div>
     </>
   );

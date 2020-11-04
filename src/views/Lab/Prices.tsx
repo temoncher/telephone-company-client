@@ -9,22 +9,20 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Fab,
-  Typography,
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
 import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
-import SqlCodeBlock from '@/components/SqlCodeBlock';
 import DataGridFab from '@/components/DataGridFab';
+import SqlCodeBlock from '@/components/SqlCodeBlock';
+import { pricesTableSql } from '@/constants/sql/views-sql.ts';
 import ApiServiceContext from '@/contexts/api-service.context';
 import { IPrice } from '@/interfaces/price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
-import { pricesTableSql } from '@/constants/sql/views-sql.ts';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 type PriceForm = Stringified<Omit<IPrice, 'price_id'>>
