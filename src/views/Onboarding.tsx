@@ -17,6 +17,7 @@ import OnboardingStepper from '../components/OnboardingStepper';
 
 import CreateDatabaseStep from './CreateDatabaseStep';
 import CreateRolesStep from './CreateRolesStep';
+import CreateViewsStep from './CreateViewsStep';
 import SeedDatabaseStep from './SeedDatabaseStep';
 import SetupTriggersStep from './SetupTriggersStep';
 
@@ -30,12 +31,12 @@ const useStyles = makeStyles(() =>
     },
     codeBlock: {
       overflow: 'auto',
-      maxHeight: '50vh',
+      maxHeight: '48vh',
       maxWidth: '100%',
     },
     schema: {
       width: '100%',
-      maxHeight: '50vh',
+      maxHeight: '48vh',
     },
   }),
 );
@@ -69,6 +70,14 @@ const Onboarding: React.FC = () => {
 
   const renderCreateDatabase: React.FC = () => (
     <CreateDatabaseStep
+      loading={loading}
+      errored={errored}
+      onNext={handleNext}
+    />
+  );
+
+  const renderCreateViews: React.FC = () => (
+    <CreateViewsStep
       loading={loading}
       errored={errored}
       onNext={handleNext}
@@ -126,6 +135,11 @@ const Onboarding: React.FC = () => {
       alias: OnboardingStepAlias.DATABASE,
       Component: renderCreateDatabase,
       label: 'Create database',
+    },
+    {
+      alias: OnboardingStepAlias.VIEWS,
+      Component: renderCreateViews,
+      label: 'Create views',
     },
     {
       alias: OnboardingStepAlias.ROLES,

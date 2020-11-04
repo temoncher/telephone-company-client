@@ -19,6 +19,7 @@ import { useQuery } from 'react-query';
 import { ITransaction } from '@/interfaces/transaction.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
+import { createColumns } from '@/utlis/create-columns';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
@@ -43,11 +44,7 @@ const Transactions: React.FC = () => {
   const transactions = transactionsData?.data;
   const accounts = accountsData?.data;
   const transactionTypes = transactionTypesData?.data;
-  const columns: ColDef[] = Object.entries(transactions ? transactions[0] : {}).map(([key, value]) => ({
-    field: key,
-    width: typeof value === 'string' ? 200 : 100,
-    type: typeof value === 'string' ? 'string' : 'number',
-  }));
+  const columns: ColDef[] = createColumns(transactions ? transactions[0] : {});
   const rows = transactions?.map((transaction, index) => ({ id: index, ...transaction }));
   const isFormValid = Object.keys(errors).length === 0;
 

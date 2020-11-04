@@ -69,7 +69,7 @@ const SetupTriggersStep: React.FC<SetupTriggersStepProps> = ({ loading, errored,
         <Tab label="Subscribers(after insert)" />
         <Tab label="Transactions(after insert)" />
         <Tab label="Calls(after insert)" />
-        <Tab label="Calls(instead of insert)" />
+        <Tab label="Calls(instead of delete)" />
       </Tabs>
 
       <TabPanel

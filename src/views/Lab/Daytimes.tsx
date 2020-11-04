@@ -13,6 +13,7 @@ import { useQuery } from 'react-query';
 import { IDaytime } from '@/interfaces/daytime.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
+import { createColumns } from '@/utlis/create-columns';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
@@ -30,11 +31,7 @@ const Daytimes: React.FC = () => {
   const globalClasses = useGlobalStyles();
 
   const daytimes = daytimesData?.data;
-  const columns: ColDef[] = Object.entries(daytimes ? daytimes[0] : {}).map(([key, value]) => ({
-    field: key,
-    width: typeof value === 'string' ? 200 : 100,
-    type: typeof value === 'string' ? 'string' : 'number',
-  }));
+  const columns: ColDef[] = createColumns(daytimes ? daytimes[0] : {});
   const rows = daytimes?.map((daytime, index) => ({ id: index, ...daytime }));
   const isFormValid = Object.keys(errors).length === 0;
 

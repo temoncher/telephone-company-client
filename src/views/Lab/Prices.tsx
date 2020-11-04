@@ -18,6 +18,7 @@ import { useQuery } from 'react-query';
 import { IPrice } from '@/interfaces/price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
+import { createColumns } from '@/utlis/create-columns';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
@@ -33,17 +34,13 @@ const Prices: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IPrice & { id: number } | null>(null);
   const { register, handleSubmit, control, errors, reset } = useForm<PriceForm>({ defaultValues });
-  const { data: pricesData, refetch: refetchPrices } = useQuery('prices', apiService.priceApi.getAllPrices);
+  const { data: pricesData, refetch: refetchPrices } = useQuery('prices', apiService.priceApi.getPricesTable);
   const { data: localitiesData } = useQuery('localities', apiService.localityApi.getAllLocalities);
   const globalClasses = useGlobalStyles();
 
   const prices = pricesData?.data;
   const localities = localitiesData?.data;
-  const columns: ColDef[] = Object.entries(prices ? prices[0] : {}).map(([key, value]) => ({
-    field: key,
-    width: typeof value === 'string' ? 200 : 100,
-    type: typeof value === 'string' ? 'string' : 'number',
-  }));
+  const columns: ColDef[] = createColumns(prices ? prices[0] : {});
   const rows = prices?.map((price, index) => ({ id: index, ...price }));
   const isFormValid = Object.keys(errors).length === 0;
 

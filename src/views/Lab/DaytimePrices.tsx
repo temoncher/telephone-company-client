@@ -18,6 +18,7 @@ import { useQuery } from 'react-query';
 import { IDaytimePrice } from '@/interfaces/daytime-price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
+import { createColumns } from '@/utlis/create-columns';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
@@ -42,11 +43,7 @@ const DaytimePrices: React.FC = () => {
   const daytimePrices = daytimePricesData?.data;
   const daytimes = daytimesData?.data;
   const prices = pricesData?.data;
-  const columns: ColDef[] = Object.entries(daytimePrices ? daytimePrices[0] : {}).map(([key, value]) => ({
-    field: key,
-    width: typeof value === 'string' ? 200 : 100,
-    type: typeof value === 'string' ? 'string' : 'number',
-  }));
+  const columns: ColDef[] = createColumns(daytimePrices ? daytimePrices[0] : {});
   const rows = daytimePrices?.map((daytimePrice, index) => ({ id: index, ...daytimePrice }));
   const isFormValid = Object.keys(errors).length === 0;
 

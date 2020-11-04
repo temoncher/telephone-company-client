@@ -18,6 +18,7 @@ import { useQuery } from 'react-query';
 import { ISubscriber } from '@/interfaces/subscriber.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
+import { createColumns } from '@/utlis/create-columns';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
@@ -43,11 +44,7 @@ const Subscribers: React.FC = () => {
 
   const subscribers = subscribersData?.data;
   const organisations = organisationsData?.data;
-  const columns: ColDef[] = Object.entries(subscribers ? subscribers[0] : {}).map(([key, value]) => ({
-    field: key,
-    width: typeof value === 'string' ? 200 : 100,
-    type: typeof value === 'string' ? 'string' : 'number',
-  }));
+  const columns: ColDef[] = createColumns(subscribers ? subscribers[0] : {});
   const rows = subscribers?.map((subscriber, index) => ({ id: index, ...subscriber }));
   const isFormValid = Object.keys(errors).length === 0;
 

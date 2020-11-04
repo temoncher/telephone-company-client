@@ -13,6 +13,7 @@ import { useQuery } from 'react-query';
 import { ILocality } from '@/interfaces/locality.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
+import { createColumns } from '@/utlis/create-columns';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
@@ -30,11 +31,7 @@ const Localitys: React.FC = () => {
   const globalClasses = useGlobalStyles();
 
   const localitys = localitiesData?.data;
-  const columns: ColDef[] = Object.entries(localitys ? localitys[0] : {}).map(([key, value]) => ({
-    field: key,
-    width: typeof value === 'string' ? 200 : 100,
-    type: typeof value === 'string' ? 'string' : 'number',
-  }));
+  const columns: ColDef[] = createColumns(localitys ? localitys[0] : {});
   const rows = localitys?.map((locality, index) => ({ id: index, ...locality }));
   const isFormValid = Object.keys(errors).length === 0;
 

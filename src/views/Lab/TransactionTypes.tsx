@@ -13,6 +13,7 @@ import { useQuery } from 'react-query';
 import { ITransactionType } from '@/interfaces/transaction-type.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
+import { createColumns } from '@/utlis/create-columns';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
@@ -30,11 +31,7 @@ const TransactionTypes: React.FC = () => {
   const globalClasses = useGlobalStyles();
 
   const transactionTypes = transactionTypesData?.data;
-  const columns: ColDef[] = Object.entries(transactionTypes ? transactionTypes[0] : {}).map(([key, value]) => ({
-    field: key,
-    width: typeof value === 'string' ? 200 : 100,
-    type: typeof value === 'string' ? 'string' : 'number',
-  }));
+  const columns: ColDef[] = createColumns(transactionTypes ? transactionTypes[0] : {});
   const rows = transactionTypes?.map((transactionType, index) => ({ id: index, ...transactionType }));
   const isFormValid = Object.keys(errors).length === 0;
 
