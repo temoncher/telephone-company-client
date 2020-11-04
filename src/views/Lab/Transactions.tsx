@@ -47,7 +47,6 @@ const Transactions: React.FC = () => {
   const transactionTypes = transactionTypesData?.data;
   const columns: ColDef[] = createColumns(transactions ? transactions[0] : {});
   const rows = transactions?.map((transaction, index) => ({ id: index, ...transaction }));
-  const values = control.getValues();
 
   React.useEffect(() => {
     if (!selectedRow) {

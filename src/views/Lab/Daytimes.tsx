@@ -27,14 +27,13 @@ const defaultValues: DaytimeForm = {
 const Daytimes: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IDaytime & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset, control, formState } = useForm<DaytimeForm>({ defaultValues, mode: 'onChange' });
+  const { register, handleSubmit, errors, reset, formState } = useForm<DaytimeForm>({ defaultValues, mode: 'onChange' });
   const { data: daytimesData, refetch: refetchDaytimes } = useQuery('daytimes', apiService.daytimeApi.getAllDaytimes);
   const globalClasses = useGlobalStyles();
 
   const daytimes = daytimesData?.data;
   const columns: ColDef[] = createColumns(daytimes ? daytimes[0] : {});
   const rows = daytimes?.map((daytime, index) => ({ id: index, ...daytime }));
-  const values = control.getValues();
 
   React.useEffect(() => {
     if (!selectedRow) {

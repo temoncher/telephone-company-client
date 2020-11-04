@@ -27,14 +27,13 @@ const defaultValues: LocalityForm = {
 const Localitys: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ILocality & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset, control, formState } = useForm<LocalityForm>({ defaultValues, mode: 'onChange' });
+  const { register, handleSubmit, errors, reset, formState } = useForm<LocalityForm>({ defaultValues, mode: 'onChange' });
   const { data: localitiesData, refetch: refetchLocalitys } = useQuery('localitys', apiService.localityApi.getAllLocalities);
   const globalClasses = useGlobalStyles();
 
   const localitys = localitiesData?.data;
   const columns: ColDef[] = createColumns(localitys ? localitys[0] : {});
   const rows = localitys?.map((locality, index) => ({ id: index, ...locality }));
-  const values = control.getValues();
 
   React.useEffect(() => {
     if (!selectedRow) {

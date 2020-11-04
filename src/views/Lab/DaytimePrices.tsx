@@ -50,7 +50,6 @@ const DaytimePrices: React.FC = () => {
   const prices = pricesData?.data;
   const columns: ColDef[] = createColumns(daytimePrices ? daytimePrices[0] : {});
   const rows = daytimePrices?.map((daytimePrice, index) => ({ id: index, ...daytimePrice }));
-  const values = control.getValues();
 
   React.useEffect(() => {
     if (!selectedRow) {

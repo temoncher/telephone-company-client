@@ -27,14 +27,13 @@ const defaultValues: OrganisationForm = {
 const Organisations: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IOrganisation & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset, control, formState } = useForm<OrganisationForm>({ defaultValues, mode: 'onChange' });
+  const { register, handleSubmit, errors, reset, formState } = useForm<OrganisationForm>({ defaultValues, mode: 'onChange' });
   const { data: organisationsData, refetch: refetchOrganisations } = useQuery('organisations', apiService.organisationApi.getAllOrganisations);
   const globalClasses = useGlobalStyles();
 
   const organisations = organisationsData?.data;
   const columns: ColDef[] = createColumns(organisations ? organisations[0] : {});
   const rows = organisations?.map((organisation, index) => ({ id: index, ...organisation }));
-  const values = control.getValues();
 
   React.useEffect(() => {
     if (!selectedRow) {

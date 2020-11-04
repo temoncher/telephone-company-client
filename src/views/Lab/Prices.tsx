@@ -46,7 +46,6 @@ const Prices: React.FC = () => {
   const localities = localitiesData?.data;
   const columns: ColDef[] = createColumns(prices ? prices[0] : {});
   const rows = prices?.map((price, index) => ({ id: index, ...price }));
-  const values = control.getValues();
 
   React.useEffect(() => {
     if (!selectedRow) {

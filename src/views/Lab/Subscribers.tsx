@@ -47,7 +47,6 @@ const Subscribers: React.FC = () => {
   const organisations = organisationsData?.data;
   const columns: ColDef[] = createColumns(subscribers ? subscribers[0] : {});
   const rows = subscribers?.map((subscriber, index) => ({ id: index, ...subscriber }));
-  const values = control.getValues();
 
   React.useEffect(() => {
     if (!selectedRow) {
