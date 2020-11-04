@@ -1,6 +1,5 @@
 
 export enum OnboardingStepAlias {
-  SCHEMA,
   DATABASE,
   ROLES,
   TRIGGERS,

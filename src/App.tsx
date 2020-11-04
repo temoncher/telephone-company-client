@@ -1,10 +1,20 @@
 import * as React from 'react';
 
-import { Snackbar, IconButton } from '@material-ui/core';
+import {
+  Snackbar,
+  IconButton,
+  Drawer,
+  makeStyles,
+  createStyles,
+  Fab,
+  Theme,
+} from '@material-ui/core';
+import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import CloseIcon from '@material-ui/icons/Close';
 import { AxiosError } from 'axios';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
+import SchemaSrc from './assets/DBSchema.png';
 import Lab from './views/Lab/index';
 import Onboarding from './views/Onboarding';
 
@@ -16,9 +26,25 @@ interface SqlError {
   type: string;
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    schemaFab: {
+      position: 'fixed',
+      bottom: 0,
+      right: 0,
+      margin: theme.spacing(4),
+    },
+    extendedIcon: {
+      marginRight: theme.spacing(1),
+    },
+  }),
+);
+
 const App: React.FC = () => {
-  const [isSnackbarOpen, setIsSnackbarOpen] = React.useState(false);
+  const [isSnackbarOpened, setIsSnackbarOpened] = React.useState(false);
+  const [isSchemaOpened, setIsSchemaOpened] = React.useState(false);
   const [message, setMessage] = React.useState('');
+  const classes = useStyles();
 
   const handleRejection = (event: PromiseRejectionEvent) => {
     if (event.reason.isAxiosError) {
@@ -30,14 +56,14 @@ const App: React.FC = () => {
         if (typeof data === 'string') {
           if (data.includes('permission was denied')) {
             setMessage('Permission denied');
-            setIsSnackbarOpen(true);
+            setIsSnackbarOpened(true);
 
             return;
           }
 
           if (data.includes('Violation of PRIMARY KEY constraint')) {
             setMessage('Violation of PRIMARY KEY constraint');
-            setIsSnackbarOpen(true);
+            setIsSnackbarOpened(true);
 
             return;
           }
@@ -49,14 +75,14 @@ const App: React.FC = () => {
           const [, [firstError]] = Object.entries(data.errors)[0];
 
           setMessage(firstError);
-          setIsSnackbarOpen(true);
+          setIsSnackbarOpened(true);
 
           return;
         }
       }
 
       setMessage('Something went terribly wrong');
-      setIsSnackbarOpen(true);
+      setIsSnackbarOpened(true);
     }
   };
 
@@ -69,7 +95,7 @@ const App: React.FC = () => {
       return;
     }
 
-    setIsSnackbarOpen(false);
+    setIsSnackbarOpened(false);
   };
 
   return (
@@ -87,12 +113,31 @@ const App: React.FC = () => {
           />
         </Switch>
       </BrowserRouter>
+
+      <Fab
+        className={classes.schemaFab}
+        color="primary"
+        variant="extended"
+        onClick={() => setIsSchemaOpened(true)}
+      >
+        <AccountTreeIcon className={classes.extendedIcon} />
+        Schema
+      </Fab>
+
+      <Drawer
+        anchor="left"
+        open={isSchemaOpened}
+        onClose={() => setIsSchemaOpened(false)}
+      >
+        <img src={SchemaSrc} />
+      </Drawer>
+
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
         }}
-        open={isSnackbarOpen}
+        open={isSnackbarOpened}
         autoHideDuration={6000}
         onClose={handleClose}
         message={message}

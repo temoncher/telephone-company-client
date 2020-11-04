@@ -17,7 +17,6 @@ import OnboardingStepper from '../components/OnboardingStepper';
 
 import CreateDatabaseStep from './CreateDatabaseStep';
 import CreateRolesStep from './CreateRolesStep';
-import SchemaStep from './SchemaStep';
 import SeedDatabaseStep from './SeedDatabaseStep';
 import SetupTriggersStep from './SetupTriggersStep';
 
@@ -42,7 +41,7 @@ const useStyles = makeStyles(() =>
 );
 
 const Onboarding: React.FC = () => {
-  const [activeStep, setActiveStep] = React.useState(OnboardingStepAlias.SCHEMA);
+  const [activeStep, setActiveStep] = React.useState(OnboardingStepAlias.DATABASE);
   const [loading, setLoading] = React.useState(false);
   const [errored, setErrored] = React.useState(false);
   const history = useHistory();
@@ -67,13 +66,6 @@ const Onboarding: React.FC = () => {
       setLoading(false);
     }
   };
-
-  const renderSchema: React.FC = () => (
-    <SchemaStep
-      errored={errored}
-      onNext={handleNext}
-    />
-  );
 
   const renderCreateDatabase: React.FC = () => (
     <CreateDatabaseStep
@@ -130,11 +122,6 @@ const Onboarding: React.FC = () => {
   );
 
   const steps: IOnboardingStep[] = [
-    {
-      alias: OnboardingStepAlias.SCHEMA,
-      Component: renderSchema,
-      label: 'View database schema',
-    },
     {
       alias: OnboardingStepAlias.DATABASE,
       Component: renderCreateDatabase,
