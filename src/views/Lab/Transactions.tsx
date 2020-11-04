@@ -36,7 +36,7 @@ const defaultValues: TransactionForm = {
 const Transactions: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ITransaction & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset, control } = useForm<TransactionForm>({ defaultValues });
+  const { register, handleSubmit, errors, reset, control, formState } = useForm<TransactionForm>({ defaultValues, mode: 'onChange' });
   const { data: transactionsData, refetch: refetchTransactions } = useQuery('transactions', apiService.transactionApi.getAllTransactions);
   const { data: accountsData } = useQuery('accounts', apiService.accountApi.getAllAccounts);
   const { data: transactionTypesData } = useQuery('transactionTypes', apiService.transactionTypeApi.getAllTransactionTypes);
@@ -47,7 +47,6 @@ const Transactions: React.FC = () => {
   const transactionTypes = transactionTypesData?.data;
   const columns: ColDef[] = createColumns(transactions ? transactions[0] : {});
   const rows = transactions?.map((transaction, index) => ({ id: index, ...transaction }));
-  const isFormValid = Object.keys(errors).length === 0;
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -182,7 +181,7 @@ const Transactions: React.FC = () => {
         type="submit"
         variant="contained"
         color="primary"
-        disabled={!isFormValid}
+        disabled={!(formState.isDirty && formState.isValid)}
       >
         {selectedRow ? 'Edit' : 'Create'}
       </Button>

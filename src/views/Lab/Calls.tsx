@@ -37,7 +37,7 @@ const defaultValues: CallForm = {
 const Calls: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ICall & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset, control } = useForm<CallForm>({ defaultValues });
+  const { register, handleSubmit, errors, reset, control, formState } = useForm<CallForm>({ defaultValues, mode: 'onChange' });
   const { data: callsData, refetch: refetchCalls } = useQuery('calls', apiService.callApi.getAllCalls);
   const { data: localitiesData } = useQuery('localities', apiService.localityApi.getAllLocalities);
   const { data: daytimesData } = useQuery('daytimes', apiService.daytimeApi.getAllDaytimes);
@@ -50,7 +50,6 @@ const Calls: React.FC = () => {
   const daytimes = daytimesData?.data;
   const columns: ColDef[] = createColumns(calls ? calls[0] : {});
   const rows = calls?.map((call, index) => ({ id: index, ...call }));
-  const isFormValid = Object.keys(errors).length === 0;
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -273,7 +272,7 @@ const Calls: React.FC = () => {
         type="submit"
         variant="contained"
         color="primary"
-        disabled={!isFormValid}
+        disabled={!(formState.isDirty && formState.isValid)}
       >
         {selectedRow ? 'Edit' : 'Create'}
       </Button>

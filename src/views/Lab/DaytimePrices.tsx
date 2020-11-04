@@ -39,7 +39,7 @@ const DaytimePrices: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IDaytimePrice & { id: number } | null>(null);
   const [isCodeShown, setIsCodeShown] = React.useState(false);
-  const { register, handleSubmit, errors, reset, control } = useForm<DaytimePriceForm>({ defaultValues });
+  const { register, handleSubmit, errors, reset, control, formState } = useForm<DaytimePriceForm>({ defaultValues, mode: 'onChange' });
   const { data: daytimePricesData, refetch: refetchDaytimePrices } = useQuery('daytimePrices', apiService.daytimePriceApi.getDaytimePricesTable);
   const { data: daytimesData } = useQuery('daytimes', apiService.daytimeApi.getAllDaytimes);
   const { data: pricesData } = useQuery('prices', apiService.priceApi.getAllPrices);
@@ -50,7 +50,6 @@ const DaytimePrices: React.FC = () => {
   const prices = pricesData?.data;
   const columns: ColDef[] = createColumns(daytimePrices ? daytimePrices[0] : {});
   const rows = daytimePrices?.map((daytimePrice, index) => ({ id: index, ...daytimePrice }));
-  const isFormValid = Object.keys(errors).length === 0;
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -213,7 +212,7 @@ const DaytimePrices: React.FC = () => {
           type="submit"
           variant="contained"
           color="primary"
-          disabled={!isFormValid}
+          disabled={!(formState.isDirty && formState.isValid)}
         >
           {selectedRow ? 'Edit' : 'Create'}
         </Button>
@@ -224,7 +223,7 @@ const DaytimePrices: React.FC = () => {
             color="secondary"
             onClick={deleteRow}
           >
-        Delete
+            Delete
           </Button>
         )}
       </form>

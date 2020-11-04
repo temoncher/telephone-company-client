@@ -37,7 +37,7 @@ const Prices: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IPrice & { id: number } | null>(null);
   const [isCodeShown, setIsCodeShown] = React.useState(false);
-  const { register, handleSubmit, control, errors, reset } = useForm<PriceForm>({ defaultValues });
+  const { register, handleSubmit, control, errors, reset, formState } = useForm<PriceForm>({ defaultValues, mode: 'onChange' });
   const { data: pricesData, refetch: refetchPrices } = useQuery('prices', apiService.priceApi.getPricesTable);
   const { data: localitiesData } = useQuery('localities', apiService.localityApi.getAllLocalities);
   const globalClasses = useGlobalStyles();
@@ -46,7 +46,6 @@ const Prices: React.FC = () => {
   const localities = localitiesData?.data;
   const columns: ColDef[] = createColumns(prices ? prices[0] : {});
   const rows = prices?.map((price, index) => ({ id: index, ...price }));
-  const isFormValid = Object.keys(errors).length === 0;
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -170,7 +169,7 @@ const Prices: React.FC = () => {
           type="submit"
           variant="contained"
           color="primary"
-          disabled={!isFormValid}
+          disabled={!(formState.isDirty && formState.isValid)}
         >
           {selectedRow ? 'Edit' : 'Create'}
         </Button>
