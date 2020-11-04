@@ -7,10 +7,10 @@ import {
 } from '@material-ui/core';
 
 import { useOnboardingStyles } from '@/styles/onboarding-styles';
+import createRolesSQL from '@sql/CreateRoles.sql';
 
 import ExecutionProgress from '../components/ExecutionProgress';
 import SqlCodeBlock from '../components/SqlCodeBlock';
-import { createRolesSQL } from '../constants/sql/databases-sql';
 import ApiServiceContext from '../contexts/api-service.context';
 
 interface CreateRolesStepProps {

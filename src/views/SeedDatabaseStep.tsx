@@ -8,9 +8,10 @@ import {
 
 import { useOnboardingStyles } from '@/styles/onboarding-styles';
 
+import seedDatabaseSQL from '@sql/Seed.sql';
+
 import ExecutionProgress from '../components/ExecutionProgress';
 import SqlCodeBlock from '../components/SqlCodeBlock';
-import { seedDatabaseSQL } from '../constants/sql/databases-sql';
 import ApiServiceContext from '../contexts/api-service.context';
 
 interface SeedDatabaseStepProps {

@@ -13,12 +13,12 @@ import {
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
+import daytimePricesTableSql from '@sql/Views/DaytimePricesGlobalView.sql';
 import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
 import DataGridFab from '@/components/DataGridFab';
 import SqlCodeBlock from '@/components/SqlCodeBlock';
-import { daytimePricesTableSql } from '@/constants/sql/views-sql.ts';
 import { IDaytimePrice } from '@/interfaces/daytime-price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';

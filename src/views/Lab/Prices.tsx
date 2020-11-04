@@ -13,12 +13,12 @@ import {
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
+import pricesTableSql from '@sql/Views/PricesGlobalView.sql';
 import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
 import DataGridFab from '@/components/DataGridFab';
 import SqlCodeBlock from '@/components/SqlCodeBlock';
-import { pricesTableSql } from '@/constants/sql/views-sql.ts';
 import ApiServiceContext from '@/contexts/api-service.context';
 import { IPrice } from '@/interfaces/price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';

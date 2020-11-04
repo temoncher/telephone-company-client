@@ -7,17 +7,15 @@ import {
   Tabs,
   Box,
 } from '@material-ui/core';
+import createAccountTriggerSQL from '@sql/Triggers/CreateAccountTrigger.sql';
+import createTransactionAfterCallTriggerSQL from '@sql/Triggers/CreateTransactionAfterCall.sql';
+import softDeleteCallTriggerSQL from '@sql/Triggers/SoftDeleteCalls.sql';
+import updateBalanceTriggerSQL from '@sql/Triggers/UpdateBalanceTrigger.sql';
 
 import { useOnboardingStyles } from '@/styles/onboarding-styles';
 
 import ExecutionProgress from '../components/ExecutionProgress';
 import SqlCodeBlock from '../components/SqlCodeBlock';
-import {
-  createAccountTriggerSQL,
-  updateBalanceTriggerSQL,
-  softDeleteCallTriggerSQL,
-  createTransactionAfterCallTriggerSQL,
-} from '../constants/sql/databases-sql';
 import ApiServiceContext from '../contexts/api-service.context';
 
 interface SetupTriggersStepProps {

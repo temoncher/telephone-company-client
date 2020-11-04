@@ -5,12 +5,12 @@ import {
   Button,
   Typography,
 } from '@material-ui/core';
+import createDatabaseSql from '@sql/CreateTables.sql';
 
 import { useOnboardingStyles } from '@/styles/onboarding-styles';
 
 import ExecutionProgress from '../components/ExecutionProgress';
 import SqlCodeBlock from '../components/SqlCodeBlock';
-import { createDatabaseSQL } from '../constants/sql/databases-sql';
 import ApiServiceContext from '../contexts/api-service.context';
 
 interface CreateDatabaseStepProps {
@@ -36,7 +36,7 @@ const CreateDatabaseStep: React.FC<CreateDatabaseStepProps> = ({ loading, errore
         className={onboardingClasses.codeBlock}
         item
       >
-        <SqlCodeBlock text={createDatabaseSQL} />
+        <SqlCodeBlock text={createDatabaseSql} />
       </Grid>
       <Grid item>
         <Button

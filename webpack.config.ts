@@ -43,6 +43,10 @@ const config: WpConfig = env => {
           test: /\.(png|svg|jpg|gif)$/,
           loader: ['file-loader'],
         },
+        {
+          test: /\.sql$/i,
+          use: 'raw-loader',
+        },
       ],
     },
     plugins: [
@@ -60,7 +64,7 @@ const config: WpConfig = env => {
       extensions: ['.ts', '.js', '.tsx'],
       alias: {
         '@': path.resolve(__dirname,  'src'),
-        '@mocks': path.resolve(__dirname, '__mocks__'),
+        '@sql': path.resolve(__dirname, '../telephone-company-api/Scripts'),
       },
     },
     devtool: 'eval-source-map',
