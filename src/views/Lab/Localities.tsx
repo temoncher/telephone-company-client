@@ -103,7 +103,7 @@ const Localitys: React.FC = () => {
             name="name"
             label="Name*"
             variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.name) }}
+            InputLabelProps={{ shrink: true }}
             error={Boolean(errors.name)}
             helperText={errors.name ? 'Field is required' : ' '}
           />

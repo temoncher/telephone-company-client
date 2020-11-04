@@ -204,7 +204,7 @@ const DaytimePrices: React.FC = () => {
           label="Price per minute*"
           variant="outlined"
           type="number"
-          InputLabelProps={{ shrink: Boolean(values.price_per_minute) }}
+          InputLabelProps={{ shrink: true }}
           error={Boolean(errors.price_per_minute)}
           helperText={errors.price_per_minute ? 'Field is required' : ' '}
         />

@@ -174,7 +174,7 @@ const Transactions: React.FC = () => {
         name="amount"
         label="Amount*"
         variant="outlined"
-        InputLabelProps={{ shrink: Boolean(values.amount) }}
+        InputLabelProps={{ shrink: true }}
         error={Boolean(errors.amount)}
         helperText={errors.amount ? 'Field is required' : ' '}
       />

@@ -122,7 +122,7 @@ const Subscribers: React.FC = () => {
             name="inn"
             label="INN*"
             variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.inn) }}
+            InputLabelProps={{ shrink: true }}
             error={Boolean(errors.inn)}
             helperText={errors.inn ? 'Field is required' : ' '}
           />
@@ -132,7 +132,7 @@ const Subscribers: React.FC = () => {
             name="first_name"
             label="First name*"
             variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.first_name) }}
+            InputLabelProps={{ shrink: true }}
             error={Boolean(errors.first_name)}
             helperText={errors.first_name ? 'Field is required' : ' '}
           />
@@ -142,7 +142,7 @@ const Subscribers: React.FC = () => {
             name="last_name"
             label="Last name*"
             variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.last_name) }}
+            InputLabelProps={{ shrink: true }}
             error={Boolean(errors.last_name)}
             helperText={errors.last_name ? 'Field is required' : ' '}
           />
@@ -152,7 +152,7 @@ const Subscribers: React.FC = () => {
             name="patronymic"
             label="Patronymic"
             variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.patronymic) }}
+            InputLabelProps={{ shrink: true }}
             error={Boolean(errors.patronymic)}
             helperText={errors.patronymic ? 'Field is required' : ' '}
           />
@@ -162,7 +162,7 @@ const Subscribers: React.FC = () => {
             name="adress"
             label="Adress"
             variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.adress) }}
+            InputLabelProps={{ shrink: true }}
             error={Boolean(errors.patronymic)}
             helperText={errors.adress ? 'Field is required' : ' '}
           />
