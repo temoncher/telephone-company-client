@@ -8,10 +8,10 @@ import {
   createStyles,
 } from '@material-ui/core';
 import CodeIcon from '@material-ui/icons/Code';
+import camelcase from 'camelcase';
 
 import SqlCodeBlock from '@/components/SqlCodeBlock';
 import { parseSql, SqlParseVariableOption } from '@/utlis/parse-sql';
-import camelcase from 'camelcase';
 
 interface CodeButtonsProps {
   createSql?: string;
@@ -28,7 +28,7 @@ interface CodeButtonsProps {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    codeBlockMargin: {
+    marginTop: {
       marginTop: theme.spacing(1),
     },
   }),
@@ -82,7 +82,7 @@ const CodeButtons: React.FC<CodeButtonsProps> = ({
       </ButtonGroup>
 
       {isFormCodeShown && (
-        <div className={classes.codeBlockMargin}>
+        <div className={classes.marginTop}>
           {selected
             ? updateSql && <SqlCodeBlock text={parseSql(updateSql, parseOptions)} />
             : createSql && <SqlCodeBlock text={parseSql(createSql, parseOptions)} />
@@ -93,7 +93,7 @@ const CodeButtons: React.FC<CodeButtonsProps> = ({
       {onDeleteClick && (
         <>
           {selected && (
-            <ButtonGroup>
+            <ButtonGroup className={classes.marginTop}>
               <Button
                 variant="contained"
                 color="secondary"
@@ -112,7 +112,7 @@ const CodeButtons: React.FC<CodeButtonsProps> = ({
           )}
 
           {isDeleteCodeShown && selected && deleteSql && (
-            <div className={classes.codeBlockMargin}>
+            <div className={classes.marginTop}>
               <SqlCodeBlock text={parseSql(deleteSql, parseOptions)} />
             </div>
           )}
