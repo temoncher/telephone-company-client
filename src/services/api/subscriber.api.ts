@@ -1,4 +1,5 @@
 import { ISubscriber } from '@/interfaces/subscriber.interface';
+import { ISubscriberView } from '@/interfaces/views/subscriber-view.interface';
 
 import { ApiBase } from './api-base';
 
@@ -8,6 +9,11 @@ export class SubscriberApi extends ApiBase {
   getAllSubscribers = () => this.apiService.sendRequest<ISubscriber[]>({
     method: 'GET',
     url: `${SUBSCRIBERS_API_ROOT}`,
+  });
+
+  getSubscribersTable = () => this.apiService.sendRequest<ISubscriberView[]>({
+    method: 'GET',
+    url: `${SUBSCRIBERS_API_ROOT}/table`,
   });
 
   createSubscriber = (subscriber: Omit<ISubscriber, 'subscriber_id'>) => this.apiService.sendRequest<number>({

@@ -11,6 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import createSubscriberSql from '@sql/Subscribers/CreateSubscriber.sql';
 import deleteSubscriberSql from '@sql/Subscribers/DeleteSubscriber.sql';
 import updateSubscriberSql from '@sql/Subscribers/UpdateSubscriber.sql';
+import subscribersTableSql from '@sql/Views/SubscribersGlobalView.sql';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -40,7 +41,7 @@ const Subscribers: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ISubscriber & { id: number } | null>(null);
   const { register, handleSubmit, control, errors, reset, watch, formState } = useForm<SubscriberForm>({ defaultValues, mode: 'onChange' });
-  const { data: subscribersData, refetch: refetchSubscribers } = useQuery('subscribers', apiService.subscriberApi.getAllSubscribers);
+  const { data: subscribersData, refetch: refetchSubscribers } = useQuery('subscribers', apiService.subscriberApi.getSubscribersTable);
   const { data: organisationsData } = useQuery('organisations', apiService.organisationApi.getAllOrganisations);
   const globalClasses = useGlobalStyles();
 
@@ -94,6 +95,7 @@ const Subscribers: React.FC = () => {
     <Layout
       cols={columns}
       rows={rows}
+      viewSql={subscribersTableSql}
       onRowClick={({ data }) => setSelectedRow(data as ISubscriber & { id: number })}
     >
       <Box className={globalClasses.editorHeader}>
