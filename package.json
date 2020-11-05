@@ -16,6 +16,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "axios": "^0.21.0",
+    "camelcase": "^6.2.0",
     "classnames": "^2.2.6",
     "css-loader": "^3.6.0",
     "html-webpack-plugin": "^4.3.0",

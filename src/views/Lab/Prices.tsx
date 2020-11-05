@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import {
-  Button,
   IconButton,
   TextField,
   FormControl,
@@ -10,19 +9,19 @@ import {
   Select,
   MenuItem,
   Paper,
-  ButtonGroup,
   Grid,
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
-import CodeIcon from '@material-ui/icons/Code';
 import createPriceSql from '@sql/Prices/CreatePrice.sql';
 import deletePriceSql from '@sql/Prices/DeletePrice.sql';
 import updatePriceSql from '@sql/Prices/UpdatePrice.sql';
 import pricesTableSql from '@sql/Views/PricesGlobalView.sql';
+import camelcase from 'camelcase';
 import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
+import CodeButtons from '@/components/CodeButtons';
 import DataGridFab from '@/components/DataGridFab';
 import SqlCodeBlock from '@/components/SqlCodeBlock';
 import ApiServiceContext from '@/contexts/api-service.context';
@@ -30,7 +29,7 @@ import { IPrice } from '@/interfaces/price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
-import { parseSql, SqlParseVariableOption } from '@/utlis/parse-sql';
+import { SqlParseVariableOption } from '@/utlis/parse-sql';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 type PriceForm = Stringified<Omit<IPrice, 'price_id'>>
@@ -44,8 +43,6 @@ const Prices: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IPrice & { id: number } | null>(null);
   const [isViewCodeShown, setIsViewCodeShown] = React.useState(false);
-  const [isFormCodeShown, setIsFormCodeShown] = React.useState(false);
-  const [isDeleteCodeShown, setIsDeleteCodeShown] = React.useState(false);
   const { register, handleSubmit, control, watch, errors, reset, formState } = useForm<PriceForm>({ defaultValues, mode: 'onChange', reValidateMode: 'onChange' });
   const { data: pricesData, refetch: refetchPrices } = useQuery('prices', apiService.priceApi.getPricesTable);
   const { data: localitiesData } = useQuery('localities', apiService.localityApi.getAllLocalities);
@@ -58,14 +55,14 @@ const Prices: React.FC = () => {
   const values = watch();
 
   const parseOptions: Record<string, SqlParseVariableOption> = {
-    localityId: {
+    [camelcase('locality_id')]: {
       value: values.locality_id,
       int: true,
     },
-    title: {
+    [camelcase('title')]: {
       value: values.title,
     },
-    priceId: {
+    [camelcase('price_id')]: {
       value: selectedRow?.price_id,
       int: true,
     },
@@ -189,55 +186,16 @@ const Prices: React.FC = () => {
           />
           <FormHelperText error={true}>{errors.locality_id ? 'Field is required' : ' '}</FormHelperText>
         </FormControl>
-        <ButtonGroup>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!(formState.isDirty && formState.isValid)}
-          >
-            {isFormCodeShown
-              ? 'Execute'
-              : selectedRow ? 'Edit' : 'Create'
-            }
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setIsFormCodeShown(!isFormCodeShown)}
-          >
-            <CodeIcon />
-          </Button>
-        </ButtonGroup>
 
-        {isFormCodeShown && (
-          selectedRow
-            ? <SqlCodeBlock text={parseSql(updatePriceSql, parseOptions)} />
-            : <SqlCodeBlock text={parseSql(createPriceSql, parseOptions)} />
-        )}
-
-        {selectedRow && (
-          <ButtonGroup>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={deleteRow}
-            >
-              {isDeleteCodeShown ? 'Execute' : 'Delete'}
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => setIsDeleteCodeShown(!isDeleteCodeShown)}
-            >
-              <CodeIcon />
-            </Button>
-          </ButtonGroup>
-        )}
-
-        {isDeleteCodeShown && selectedRow && (
-          <SqlCodeBlock text={parseSql(deletePriceSql, parseOptions)} />
-        )}
+        <CodeButtons
+          parseOptions={parseOptions}
+          createSql={createPriceSql}
+          updateSql={updatePriceSql}
+          deleteSql={deletePriceSql}
+          selected={selectedRow}
+          disabled={!(formState.isDirty && formState.isValid)}
+          onDeleteClick={deleteRow}
+        />
       </form>
     </>
   );
