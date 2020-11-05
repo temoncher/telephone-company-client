@@ -26,6 +26,7 @@ import { Role } from '@/enums/role.enum';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
+import Accounts from './Accounts';
 import Calls from './Calls';
 import DaytimePrices from './DaytimePrices';
 import Daytimes from './Daytimes';
@@ -103,6 +104,12 @@ const Lab: React.FC = () => {
       onlyAdmin: true,
       url: `${match.path}/subscribers`,
       component: Subscribers,
+    },
+    {
+      title: 'Accounts',
+      onlyAdmin: true,
+      url: `${match.path}/accounts`,
+      component: Accounts,
     },
     {
       title: 'Organisations',
