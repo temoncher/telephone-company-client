@@ -10,17 +10,21 @@ import {
   Select,
   MenuItem,
   Typography,
-  Paper,
 } from '@material-ui/core';
-import { DataGrid, ColDef } from '@material-ui/data-grid';
+import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
+import createCallSql from '@sql/Calls/CreateCall.sql';
+import camelcase from 'camelcase';
 import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
+import CodeButtons from '@/components/CodeButtons';
+import Layout from '@/components/Layout';
 import { ICall } from '@/interfaces/call.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
+import { SqlParseVariableOption } from '@/utlis/parse-sql';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
@@ -37,7 +41,7 @@ const defaultValues: CallForm = {
 const Calls: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ICall & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset, control, formState } = useForm<CallForm>({ defaultValues, mode: 'onChange' });
+  const { register, handleSubmit, errors, reset, watch, control, formState } = useForm<CallForm>({ defaultValues, mode: 'onChange' });
   const { data: callsData, refetch: refetchCalls } = useQuery('calls', apiService.callApi.getAllCalls);
   const { data: localitiesData } = useQuery('localities', apiService.localityApi.getAllLocalities);
   const { data: daytimesData } = useQuery('daytimes', apiService.daytimeApi.getAllDaytimes);
@@ -50,6 +54,30 @@ const Calls: React.FC = () => {
   const daytimes = daytimesData?.data;
   const columns: ColDef[] = createColumns(calls ? calls[0] : {});
   const rows = calls?.map((call, index) => ({ id: index, ...call }));
+  const values = watch();
+
+  const parseOptions: Record<string, SqlParseVariableOption> = {
+    [camelcase('subscriber_id')]: {
+      value: values.subscriber_id,
+      int: true,
+    },
+    [camelcase('daytime_id')]: {
+      value: values.daytime_id,
+      int: true,
+    },
+    [camelcase('locality_id')]: {
+      value: values.locality_id,
+      int: true,
+    },
+    [camelcase('duration')]: {
+      value: values.duration,
+      int: true,
+    },
+    [camelcase('call_id')]: {
+      value: selectedRow?.call_id,
+      int: true,
+    },
+  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -148,44 +176,6 @@ const Calls: React.FC = () => {
         variant="outlined"
         size="small"
       >
-        <InputLabel id="locality-label">
-          Locality*
-        </InputLabel>
-        <Controller
-          rules={{ required: true }}
-          as={
-            <Select
-              labelId="locality-label"
-              inputProps={{
-                name: 'locality_id',
-              }}
-              label="Account"
-              error={Boolean(errors.locality_id)}
-            >
-              <MenuItem value="">
-                None
-              </MenuItem>
-              {localities?.map((locality) => (
-                <MenuItem
-                  key={`locality_${locality.locality_id}`}
-                  value={locality.locality_id}
-                >
-                  {locality.name}
-                </MenuItem>
-              ))}
-            </Select>
-          }
-          name="locality_id"
-          control={control}
-          defaultValue=""
-        />
-        <FormHelperText error={true}>{errors.locality_id ? 'Field is required' : ' '}</FormHelperText>
-      </FormControl>
-
-      <FormControl
-        variant="outlined"
-        size="small"
-      >
         <InputLabel id="subscriber-label">
           Subscriber*
         </InputLabel>
@@ -218,6 +208,44 @@ const Calls: React.FC = () => {
           defaultValue=""
         />
         <FormHelperText error={true}>{errors.subscriber_id ? 'Field is required' : ' '}</FormHelperText>
+      </FormControl>
+
+      <FormControl
+        variant="outlined"
+        size="small"
+      >
+        <InputLabel id="locality-label">
+          Locality*
+        </InputLabel>
+        <Controller
+          rules={{ required: true }}
+          as={
+            <Select
+              labelId="locality-label"
+              inputProps={{
+                name: 'locality_id',
+              }}
+              label="Account"
+              error={Boolean(errors.locality_id)}
+            >
+              <MenuItem value="">
+                None
+              </MenuItem>
+              {localities?.map((locality) => (
+                <MenuItem
+                  key={`locality_${locality.locality_id}`}
+                  value={locality.locality_id}
+                >
+                  {locality.name}
+                </MenuItem>
+              ))}
+            </Select>
+          }
+          name="locality_id"
+          control={control}
+          defaultValue=""
+        />
+        <FormHelperText error={true}>{errors.locality_id ? 'Field is required' : ' '}</FormHelperText>
       </FormControl>
 
       <FormControl
@@ -268,47 +296,36 @@ const Calls: React.FC = () => {
         helperText={errors.duration ? 'Field is required' : ' '}
       />
 
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
+      <CodeButtons
+        parseOptions={parseOptions}
+        createSql={createCallSql}
+        selected={selectedRow}
         disabled={!(formState.isDirty && formState.isValid)}
-      >
-        {selectedRow ? 'Edit' : 'Create'}
-      </Button>
+      />
     </form>
   );
 
   return (
-    <>
-      <Paper
-        className={globalClasses.dataGrid}
-      >
-        {rows && (
-          <DataGrid
-            columns={columns}
-            rows={rows}
-            onRowClick={({ data }) => setSelectedRow(data as ICall & { id: number })}
-          />
+    <Layout
+      cols={columns}
+      rows={rows}
+      onRowClick={({ data }) => setSelectedRow(data as ICall & { id: number })}
+    >
+      <div className={globalClasses.editorHeader}>
+        <Typography variant="body1">
+          {selectedRow ? 'Delete call' : 'Create new call'}
+        </Typography>
+        {selectedRow && (
+          <IconButton
+            size="small"
+            onClick={() => setSelectedRow(null)}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
         )}
-      </Paper>
-      <Paper className={globalClasses.editor}>
-        <div className={globalClasses.editorHeader}>
-          <Typography variant="body1">
-            {selectedRow ? 'Edit call' : 'Create new call'}
-          </Typography>
-          {selectedRow && (
-            <IconButton
-              size="small"
-              onClick={() => setSelectedRow(null)}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          )}
-        </div>
-        {selectedRow ? renderWarning() : renderForm()}
-      </Paper>
-    </>
+      </div>
+      {selectedRow ? renderWarning() : renderForm()}
+    </Layout>
   );
 };
 

@@ -6,7 +6,7 @@ export interface SqlParseVariableOption {
 export const parseSql = (script: string, options: Record<string, SqlParseVariableOption>) => {
   const newScript: string = Object.entries(options)
     .reduce((editedScript, [key, { int, value }]) => {
-      if (value === undefined) return editedScript;
+      if (value === undefined || value === '') return editedScript;
 
       const regExp = new RegExp(`@${key}`, 'g');
 
