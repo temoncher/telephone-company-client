@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core';
 import { DataGrid, ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
+import createTransactionSql from '@sql/Transactions/CreateTransaction.sql';
 import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -24,6 +25,9 @@ import { createColumns } from '@/utlis/create-columns';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
+import SelectControl from '@/components/SelectControl';
+import CodeButtons from '@/components/CodeButtons';
+import Layout from '@/components/Layout';
 
 type TransactionForm = Stringified<Omit<Stringified<ITransaction>, 'transaction_id' | 'timestamp'>>;
 
@@ -92,81 +96,39 @@ const Transactions: React.FC = () => {
       className={globalClasses.editorForm}
       onSubmit={handleSubmit(handleSubmitClick)}
     >
-      <FormControl
-        variant="outlined"
-        size="small"
+      <SelectControl
+        label="Transaction type*"
+        name="transaction_type_id"
+        control={control}
+        error={Boolean(errors.transaction_type_id)}
+        helperText={errors.transaction_type_id ? 'Field is required' : ' '}
       >
-        <InputLabel id="account-label">
-          Account*
-        </InputLabel>
-        <Controller
-          rules={{ required: true }}
-          as={
-            <Select
-              labelId="account-label"
-              inputProps={{
-                name: 'account_id',
-              }}
-              label="Account"
-              error={Boolean(errors.account_id)}
-            >
-              <MenuItem value="">
-                None
-              </MenuItem>
-              {accounts?.map((account) => (
-                <MenuItem
-                  key={`${account.subscriber_id}_${account.account_id}`}
-                  value={account.account_id}
-                >
-                  {`${account.subscriber_id}_${account.account_id}`}
-                </MenuItem>
-              ))}
-            </Select>
-          }
-          name="account_id"
-          control={control}
-          defaultValue=""
-        />
-        <FormHelperText error={true}>{errors.account_id ? 'Field is required' : ' '}</FormHelperText>
-      </FormControl>
+        {transactionTypes?.map((transactionType) => (
+          <MenuItem
+            key={transactionType.title}
+            value={transactionType.transaction_type_id}
+          >
+            {transactionType.title}
+          </MenuItem>
+        ))}
+      </SelectControl>
 
-      <FormControl
-        variant="outlined"
-        size="small"
+      <SelectControl
+        label="Account*"
+        name="account_id"
+        control={control}
+        error={Boolean(errors.account_id)}
+        helperText={errors.account_id ? 'Field is required' : ' '}
       >
-        <InputLabel id="transactionType-label">
-          Transaction type*
-        </InputLabel>
-        <Controller
-          rules={{ required: true }}
-          as={
-            <Select
-              labelId="transactionType-label"
-              inputProps={{
-                name: 'transaction_type_id',
-              }}
-              label="Account"
-              error={Boolean(errors.transaction_type_id)}
-            >
-              <MenuItem value="">
-                None
-              </MenuItem>
-              {transactionTypes?.map((transactionType) => (
-                <MenuItem
-                  key={transactionType.title}
-                  value={transactionType.transaction_type_id}
-                >
-                  {transactionType.title}
-                </MenuItem>
-              ))}
-            </Select>
-          }
-          name="transaction_type_id"
-          control={control}
-          defaultValue=""
-        />
-        <FormHelperText error={true}>{errors.transaction_type_id ? 'Field is required' : ' '}</FormHelperText>
-      </FormControl>
+        {accounts?.map((account) => (
+          <MenuItem
+            key={`${account.subscriber_id}_${account.account_id}`}
+            value={account.account_id}
+          >
+            {`${account.subscriber_id}_${account.account_id}`}
+          </MenuItem>
+        ))}
+      </SelectControl>
 
       <TextField
         inputRef={register({ required: true })}
@@ -174,48 +136,41 @@ const Transactions: React.FC = () => {
         name="amount"
         label="Amount*"
         variant="outlined"
+        type="number"
         InputLabelProps={{ shrink: Boolean(values.amount) }}
         error={Boolean(errors.amount)}
         helperText={errors.amount ? 'Field is required' : ' '}
       />
 
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
+      <CodeButtons
+        type={transactions && transactions[0] || {}}
+        values={{ ...values, transaction_id: selectedRow?.transaction_id }}
+        createSql={createTransactionSql}
+        selected={selectedRow}
         disabled={!(formState.isDirty && formState.isValid)}
-      >
-        {selectedRow ? 'Edit' : 'Create'}
-      </Button>
+      />
     </form>
   );
 
   return (
-    <>
-      <Paper className={globalClasses.dataGrid}>
-        {rows && (
-          <DataGrid
-            columns={columns}
-            rows={rows}
-            onRowClick={({ data }) => setSelectedRow(data as ITransaction & { id: number })}
-          />
+    <Layout
+      cols={columns}
+      rows={rows}
+      onRowClick={({ data }) => setSelectedRow(data as ITransaction & { id: number })}
+    >
+      <div className={globalClasses.editorHeader}>
+        {selectedRow ? 'Edit daytime price' : 'Create new transaction'}
+        {selectedRow && (
+          <IconButton
+            size="small"
+            onClick={() => setSelectedRow(null)}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
         )}
-      </Paper>
-      <Paper className={globalClasses.editor}>
-        <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit daytime price' : 'Create new transaction'}
-          {selectedRow && (
-            <IconButton
-              size="small"
-              onClick={() => setSelectedRow(null)}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          )}
-        </div>
-        {selectedRow ? renderWarning() : renderForm()}
-      </Paper>
-    </>
+      </div>
+      {selectedRow ? renderWarning() : renderForm()}
+    </Layout>
   );
 };
 
