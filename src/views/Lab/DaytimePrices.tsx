@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import {
-  Button,
   IconButton,
   TextField,
   FormControl,
@@ -9,23 +8,26 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Paper,
 } from '@material-ui/core';
-import { DataGrid, ColDef } from '@material-ui/data-grid';
+import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
+import createDaytimePriceSql from '@sql/DaytimePrices/CreateDaytimePrice.sql';
+import deleteDaytimePriceSql from '@sql/DaytimePrices/DeleteDaytimePrice.sql';
+import updateDaytimePriceSql from '@sql/DaytimePrices/UpdateDaytimePrice.sql';
 import daytimePricesTableSql from '@sql/Views/DaytimePricesGlobalView.sql';
+import camelcase from 'camelcase';
 import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
-import DataGridFab from '@/components/DataGridFab';
-import SqlCodeBlock from '@/components/SqlCodeBlock';
+import CodeButtons from '@/components/CodeButtons';
+import Layout from '@/components/Layout';
+import ApiServiceContext from '@/contexts/api-service.context';
 import { IDaytimePrice } from '@/interfaces/daytime-price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
+import { SqlParseVariableOption } from '@/utlis/parse-sql';
 import { stringifyObjectProperites } from '@/utlis/stringify';
-
-import ApiServiceContext from '../../contexts/api-service.context';
 
 type DaytimePriceForm = Stringified<IDaytimePrice>;
 
@@ -38,8 +40,7 @@ const defaultValues: DaytimePriceForm = {
 const DaytimePrices: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IDaytimePrice & { id: number } | null>(null);
-  const [isCodeShown, setIsCodeShown] = React.useState(false);
-  const { register, handleSubmit, errors, reset, control, formState } = useForm<DaytimePriceForm>({ defaultValues, mode: 'onChange' });
+  const { register, handleSubmit, errors, reset, watch, control, formState } = useForm<DaytimePriceForm>({ defaultValues, mode: 'onChange' });
   const { data: daytimePricesData, refetch: refetchDaytimePrices } = useQuery('daytimePrices', apiService.daytimePriceApi.getDaytimePricesTable);
   const { data: daytimesData } = useQuery('daytimes', apiService.daytimeApi.getAllDaytimes);
   const { data: pricesData } = useQuery('prices', apiService.priceApi.getAllPrices);
@@ -50,6 +51,21 @@ const DaytimePrices: React.FC = () => {
   const prices = pricesData?.data;
   const columns: ColDef[] = createColumns(daytimePrices ? daytimePrices[0] : {});
   const rows = daytimePrices?.map((daytimePrice, index) => ({ id: index, ...daytimePrice }));
+  const values = watch();
+
+  const parseOptions: Record<string, SqlParseVariableOption> = {
+    [camelcase('daytime_id')]: {
+      value: values.daytime_id,
+      int: true,
+    },
+    [camelcase('price_id')]: {
+      value: values.price_id,
+      int: true,
+    },
+    [camelcase('price_per_minute')]: {
+      value: values.price_per_minute,
+    },
+  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -93,23 +109,13 @@ const DaytimePrices: React.FC = () => {
     await refetchDaytimePrices();
   };
 
-  const renderCode = () => (
-    <>
-      <div className={globalClasses.editorHeader}>
-        <div>Daytime prices view code</div>
-        <IconButton
-          size="small"
-          onClick={() => setIsCodeShown(false)}
-        >
-          <CloseIcon fontSize="small" />
-        </IconButton>
-      </div>
-      <SqlCodeBlock text={daytimePricesTableSql} />
-    </>
-  );
-
-  const renderEditor = () => (
-    <>
+  return (
+    <Layout
+      cols={columns}
+      rows={rows}
+      viewSql={daytimePricesTableSql}
+      onRowClick={({ data }) => setSelectedRow(data as IDaytimePrice & { id: number })}
+    >
       <div className={globalClasses.editorHeader}>
         {selectedRow ? 'Edit daytime price' : 'Create new daytime price'}
         {selectedRow && (
@@ -125,6 +131,41 @@ const DaytimePrices: React.FC = () => {
         className={globalClasses.editorForm}
         onSubmit={handleSubmit(handleSubmitClick)}
       >
+        <FormControl
+          variant="outlined"
+          size="small"
+        >
+          <InputLabel id="price-label">
+          Price*
+          </InputLabel>
+          <Controller
+            rules={{ required: true }}
+            as={(
+              <Select
+                labelId="price-label"
+                label="Locality"
+                error={Boolean(errors.price_id)}
+              >
+                <MenuItem value="">
+                None
+                </MenuItem>
+                {prices?.map((price) => (
+                  <MenuItem
+                    key={price.title}
+                    value={price.price_id}
+                  >
+                    {price.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            )}
+            name="price_id"
+            control={control}
+            defaultValue=""
+          />
+          <FormHelperText error={true}>{errors.price_id ? 'Field is required' : ' '}</FormHelperText>
+        </FormControl>
+
         <FormControl
           variant="outlined"
           size="small"
@@ -161,41 +202,6 @@ const DaytimePrices: React.FC = () => {
           <FormHelperText error={true}>{errors.daytime_id ? 'Field is required' : ' '}</FormHelperText>
         </FormControl>
 
-        <FormControl
-          variant="outlined"
-          size="small"
-        >
-          <InputLabel id="price-label">
-            Price*
-          </InputLabel>
-          <Controller
-            rules={{ required: true }}
-            as={(
-              <Select
-                labelId="price-label"
-                label="Locality"
-                error={Boolean(errors.price_id)}
-              >
-                <MenuItem value="">
-                  None
-                </MenuItem>
-                {prices?.map((price) => (
-                  <MenuItem
-                    key={price.title}
-                    value={price.price_id}
-                  >
-                    {price.title}
-                  </MenuItem>
-                ))}
-              </Select>
-            )}
-            name="price_id"
-            control={control}
-            defaultValue=""
-          />
-          <FormHelperText error={true}>{errors.price_id ? 'Field is required' : ' '}</FormHelperText>
-        </FormControl>
-
         <TextField
           inputRef={register({ required: true })}
           size="small"
@@ -203,50 +209,22 @@ const DaytimePrices: React.FC = () => {
           label="Price per minute*"
           variant="outlined"
           type="number"
-          InputLabelProps={{ shrink: true }}
+          InputLabelProps={{ shrink: Boolean(values.price_per_minute) }}
           error={Boolean(errors.price_per_minute)}
           helperText={errors.price_per_minute ? 'Field is required' : ' '}
         />
 
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
+        <CodeButtons
+          parseOptions={parseOptions}
+          createSql={createDaytimePriceSql}
+          updateSql={updateDaytimePriceSql}
+          deleteSql={deleteDaytimePriceSql}
+          selected={selectedRow}
           disabled={!(formState.isDirty && formState.isValid)}
-        >
-          {selectedRow ? 'Edit' : 'Create'}
-        </Button>
-
-        {selectedRow && (
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={deleteRow}
-          >
-            Delete
-          </Button>
-        )}
+          onDeleteClick={deleteRow}
+        />
       </form>
-    </>
-  );
-
-  return (
-    <>
-      <Paper className={globalClasses.dataGrid}>
-        {rows && (
-          <DataGrid
-            columns={columns}
-            rows={rows}
-            onRowClick={({ data }) => setSelectedRow(data as IDaytimePrice & { id: number })}
-          />
-        )}
-
-        <DataGridFab onClick={() => setIsCodeShown(!isCodeShown)} />
-      </Paper>
-      <Paper className={globalClasses.editor}>
-        { isCodeShown ? renderCode() : renderEditor() }
-      </Paper>
-    </>
+    </Layout>
   );
 };
 
