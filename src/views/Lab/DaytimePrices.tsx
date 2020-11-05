@@ -11,7 +11,6 @@ import createDaytimePriceSql from '@sql/DaytimePrices/CreateDaytimePrice.sql';
 import deleteDaytimePriceSql from '@sql/DaytimePrices/DeleteDaytimePrice.sql';
 import updateDaytimePriceSql from '@sql/DaytimePrices/UpdateDaytimePrice.sql';
 import daytimePricesTableSql from '@sql/Views/DaytimePricesGlobalView.sql';
-import camelcase from 'camelcase';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -23,7 +22,6 @@ import { IDaytimePrice } from '@/interfaces/daytime-price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
-import { SqlParseVariableOption } from '@/utlis/parse-sql';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 type DaytimePriceForm = Stringified<IDaytimePrice>;
@@ -49,21 +47,6 @@ const DaytimePrices: React.FC = () => {
   const columns: ColDef[] = createColumns(daytimePrices ? daytimePrices[0] : {});
   const rows = daytimePrices?.map((daytimePrice, index) => ({ id: index, ...daytimePrice }));
   const values = watch();
-
-  const parseOptions: Record<string, SqlParseVariableOption> = {
-    [camelcase('daytime_id')]: {
-      value: values.daytime_id,
-      int: true,
-    },
-    [camelcase('price_id')]: {
-      value: values.price_id,
-      int: true,
-    },
-    [camelcase('price_per_minute')]: {
-      value: values.price_per_minute,
-      int: true,
-    },
-  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -177,7 +160,8 @@ const DaytimePrices: React.FC = () => {
         />
 
         <CodeButtons
-          parseOptions={parseOptions}
+          type={daytimePrices && daytimePrices[0] || {}}
+          values={values}
           createSql={createDaytimePriceSql}
           updateSql={updateDaytimePriceSql}
           deleteSql={deleteDaytimePriceSql}

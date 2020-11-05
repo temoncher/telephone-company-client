@@ -9,7 +9,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import createOrganisationSql from '@sql/Organisations/CreateOrganisation.sql';
 import deleteOrganisationSql from '@sql/Organisations/DeleteOrganisation.sql';
 import updateOrganisationSql from '@sql/Organisations/UpdateOrganisation.sql';
-import camelcase from 'camelcase';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -19,7 +18,6 @@ import { IOrganisation } from '@/interfaces/organisation.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
-import { SqlParseVariableOption } from '@/utlis/parse-sql';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
@@ -40,16 +38,6 @@ const Organisations: React.FC = () => {
   const columns: ColDef[] = createColumns(organisations ? organisations[0] : {});
   const rows = organisations?.map((organisation, index) => ({ id: index, ...organisation }));
   const values = watch();
-
-  const parseOptions: Record<string, SqlParseVariableOption> = {
-    [camelcase('name')]: {
-      value: values.name,
-    },
-    [camelcase('organisation_id')]: {
-      value: selectedRow?.organisation_id,
-      int: true,
-    },
-  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -118,7 +106,8 @@ const Organisations: React.FC = () => {
         />
 
         <CodeButtons
-          parseOptions={parseOptions}
+          type={organisations && organisations[0] || {}}
+          values={{ ...values, organisation_id: selectedRow?.organisation_id }}
           createSql={createOrganisationSql}
           updateSql={updateOrganisationSql}
           deleteSql={deleteOrganisationSql}

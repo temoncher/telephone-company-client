@@ -9,7 +9,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import createDaytimeSql from '@sql/Daytimes/CreateDaytime.sql';
 import deleteDaytimeSql from '@sql/Daytimes/DeleteDaytime.sql';
 import updateDaytimeSql from '@sql/Daytimes/UpdateDaytime.sql';
-import camelcase from 'camelcase';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -19,7 +18,6 @@ import { IDaytime } from '@/interfaces/daytime.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
-import { SqlParseVariableOption } from '@/utlis/parse-sql';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
@@ -40,16 +38,6 @@ const Daytimes: React.FC = () => {
   const columns: ColDef[] = daytimes ? createColumns(daytimes[0]) : [];
   const rows = daytimes?.map((daytime, index) => ({ id: index, ...daytime }));
   const values = watch();
-
-  const parseOptions: Record<string, SqlParseVariableOption> = {
-    [camelcase('title')]: {
-      value: values.title,
-    },
-    [camelcase('daytime_id')]: {
-      value: selectedRow?.daytime_id,
-      int: true,
-    },
-  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -118,7 +106,8 @@ const Daytimes: React.FC = () => {
         />
 
         <CodeButtons
-          parseOptions={parseOptions}
+          type={daytimes && daytimes[0] || {}}
+          values={{ ...values, daytime_id: selectedRow?.daytime_id }}
           createSql={createDaytimeSql}
           updateSql={updateDaytimeSql}
           deleteSql={deleteDaytimeSql}

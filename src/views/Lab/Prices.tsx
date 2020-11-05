@@ -15,7 +15,6 @@ import createPriceSql from '@sql/Prices/CreatePrice.sql';
 import deletePriceSql from '@sql/Prices/DeletePrice.sql';
 import updatePriceSql from '@sql/Prices/UpdatePrice.sql';
 import pricesTableSql from '@sql/Views/PricesGlobalView.sql';
-import camelcase from 'camelcase';
 import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -26,7 +25,6 @@ import { IPrice } from '@/interfaces/price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
-import { SqlParseVariableOption } from '@/utlis/parse-sql';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 type PriceForm = Stringified<Omit<IPrice, 'price_id'>>
@@ -49,20 +47,6 @@ const Prices: React.FC = () => {
   const columns: ColDef[] = createColumns(prices ? prices[0] : {});
   const rows = prices?.map((price, index) => ({ id: index, ...price }));
   const values = watch();
-
-  const parseOptions: Record<string, SqlParseVariableOption> = {
-    [camelcase('locality_id')]: {
-      value: values.locality_id,
-      int: true,
-    },
-    [camelcase('title')]: {
-      value: values.title,
-    },
-    [camelcase('price_id')]: {
-      value: selectedRow?.price_id,
-      int: true,
-    },
-  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -174,7 +158,8 @@ const Prices: React.FC = () => {
         </FormControl>
 
         <CodeButtons
-          parseOptions={parseOptions}
+          type={prices && prices[0] || {}}
+          values={{ ...values, price_id: selectedRow?.price_id }}
           createSql={createPriceSql}
           updateSql={updatePriceSql}
           deleteSql={deletePriceSql}

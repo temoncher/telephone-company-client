@@ -9,7 +9,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import createLocalitySql from '@sql/Localities/CreateLocality.sql';
 import deleteLocalitySql from '@sql/Localities/DeleteLocality.sql';
 import updateLocalitySql from '@sql/Localities/UpdateLocality.sql';
-import camelcase from 'camelcase';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -19,7 +18,6 @@ import { ILocality } from '@/interfaces/locality.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
-import { SqlParseVariableOption } from '@/utlis/parse-sql';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
@@ -36,20 +34,10 @@ const Localities: React.FC = () => {
   const { data: localitiesData, refetch: refetchLocalitys } = useQuery('localitys', apiService.localityApi.getAllLocalities);
   const globalClasses = useGlobalStyles();
 
-  const localitys = localitiesData?.data;
-  const columns: ColDef[] = createColumns(localitys ? localitys[0] : {});
-  const rows = localitys?.map((locality, index) => ({ id: index, ...locality }));
+  const localities = localitiesData?.data;
+  const columns: ColDef[] = createColumns(localities ? localities[0] : {});
+  const rows = localities?.map((locality, index) => ({ id: index, ...locality }));
   const values = watch();
-
-  const parseOptions: Record<string, SqlParseVariableOption> = {
-    [camelcase('name')]: {
-      value: values.name,
-    },
-    [camelcase('locality_id')]: {
-      value: selectedRow?.locality_id,
-      int: true,
-    },
-  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -118,7 +106,8 @@ const Localities: React.FC = () => {
         />
 
         <CodeButtons
-          parseOptions={parseOptions}
+          type={localities && localities[0] || {}}
+          values={{ ...values, locality_id: selectedRow?.locality_id }}
           createSql={createLocalitySql}
           updateSql={updateLocalitySql}
           deleteSql={deleteLocalitySql}

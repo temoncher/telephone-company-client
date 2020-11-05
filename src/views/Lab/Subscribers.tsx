@@ -10,7 +10,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import createSubscriberSql from '@sql/Subscribers/CreateSubscriber.sql';
 import deleteSubscriberSql from '@sql/Subscribers/DeleteSubscriber.sql';
 import updateSubscriberSql from '@sql/Subscribers/UpdateSubscriber.sql';
-import camelcase from 'camelcase';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -21,7 +20,6 @@ import { ISubscriber } from '@/interfaces/subscriber.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
-import { SqlParseVariableOption } from '@/utlis/parse-sql';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
@@ -50,33 +48,6 @@ const Subscribers: React.FC = () => {
   const columns: ColDef[] = createColumns(subscribers ? subscribers[0] : {});
   const rows = subscribers?.map((subscriber, index) => ({ id: index, ...subscriber }));
   const values = watch();
-
-  const parseOptions: Record<string, SqlParseVariableOption> = {
-    [camelcase('adress')]: {
-      value: values.adress,
-    },
-    [camelcase('first_name')]: {
-      value: values.first_name,
-    },
-    [camelcase('inn')]: {
-      value: values.inn,
-      int: true,
-    },
-    [camelcase('last_name')]: {
-      value: values.last_name,
-    },
-    [camelcase('organisation_id')]: {
-      value: values.organisation_id,
-      int: true,
-    },
-    [camelcase('patronymic')]: {
-      value: values.patronymic,
-    },
-    [camelcase('subscriber_id')]: {
-      value: selectedRow?.subscriber_id,
-      int: true,
-    },
-  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -209,7 +180,8 @@ const Subscribers: React.FC = () => {
         />
 
         <CodeButtons
-          parseOptions={parseOptions}
+          type={subscribers && subscribers[0] || {}}
+          values={{ ...values, subscriber_id: selectedRow?.subscriber_id }}
           createSql={createSubscriberSql}
           updateSql={updateSubscriberSql}
           deleteSql={deleteSubscriberSql}

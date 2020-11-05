@@ -10,7 +10,6 @@ import {
 import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
 import createCallSql from '@sql/Calls/CreateCall.sql';
-import camelcase from 'camelcase';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -21,7 +20,6 @@ import { ICall } from '@/interfaces/call.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
-import { SqlParseVariableOption } from '@/utlis/parse-sql';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
@@ -52,29 +50,6 @@ const Calls: React.FC = () => {
   const columns: ColDef[] = createColumns(calls ? calls[0] : {});
   const rows = calls?.map((call, index) => ({ id: index, ...call }));
   const values = watch();
-
-  const parseOptions: Record<string, SqlParseVariableOption> = {
-    [camelcase('subscriber_id')]: {
-      value: values.subscriber_id,
-      int: true,
-    },
-    [camelcase('daytime_id')]: {
-      value: values.daytime_id,
-      int: true,
-    },
-    [camelcase('locality_id')]: {
-      value: values.locality_id,
-      int: true,
-    },
-    [camelcase('duration')]: {
-      value: values.duration,
-      int: true,
-    },
-    [camelcase('call_id')]: {
-      value: selectedRow?.call_id,
-      int: true,
-    },
-  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -233,7 +208,8 @@ const Calls: React.FC = () => {
       />
 
       <CodeButtons
-        parseOptions={parseOptions}
+        type={calls && calls[0] || {}}
+        values={{ ...values, call_id: selectedRow?.call_id }}
         createSql={createCallSql}
         selected={selectedRow}
         disabled={!(formState.isDirty && formState.isValid)}

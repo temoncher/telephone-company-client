@@ -11,15 +11,18 @@ import CodeIcon from '@material-ui/icons/Code';
 
 import SqlCodeBlock from '@/components/SqlCodeBlock';
 import { parseSql, SqlParseVariableOption } from '@/utlis/parse-sql';
+import camelcase from 'camelcase';
 
 interface CodeButtonsProps {
-  parseOptions: Record<string, SqlParseVariableOption>;
   createSql?: string;
   updateSql?: string;
   deleteSql?: string;
   disabled?: boolean;
+  values: Record<string, any>;
   // eslint-disable-next-line @typescript-eslint/ban-types
-  selected: object | null;
+  type: Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  selected: Record<string, any> | null;
   onDeleteClick?: () => void;
 }
 
@@ -33,8 +36,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const CodeButtons: React.FC<CodeButtonsProps> = ({
   disabled,
-  parseOptions,
+  values,
   selected,
+  type,
   onDeleteClick,
   updateSql,
   deleteSql,
@@ -43,6 +47,16 @@ const CodeButtons: React.FC<CodeButtonsProps> = ({
   const [isFormCodeShown, setIsFormCodeShown] = React.useState(false);
   const [isDeleteCodeShown, setIsDeleteCodeShown] = React.useState(false);
   const classes = useStyles();
+
+  const parseOptions = Object.entries(values)
+    .reduce((aggregator, [key, value]) => {
+      aggregator[camelcase(key)] = {
+        value,
+        int: typeof type[key] === 'number' || undefined,
+      };
+
+      return aggregator;
+    }, {} as Record<string, SqlParseVariableOption>);
 
   return (
     <>
