@@ -3,10 +3,6 @@ import * as React from 'react';
 import {
   IconButton,
   TextField,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  Select,
   MenuItem,
 } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
@@ -16,11 +12,12 @@ import deleteDaytimePriceSql from '@sql/DaytimePrices/DeleteDaytimePrice.sql';
 import updateDaytimePriceSql from '@sql/DaytimePrices/UpdateDaytimePrice.sql';
 import daytimePricesTableSql from '@sql/Views/DaytimePricesGlobalView.sql';
 import camelcase from 'camelcase';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
 import CodeButtons from '@/components/CodeButtons';
 import Layout from '@/components/Layout';
+import SelectControl from '@/components/SelectControl';
 import ApiServiceContext from '@/contexts/api-service.context';
 import { IDaytimePrice } from '@/interfaces/daytime-price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
@@ -132,76 +129,40 @@ const DaytimePrices: React.FC = () => {
         className={globalClasses.editorForm}
         onSubmit={handleSubmit(handleSubmitClick)}
       >
-        <FormControl
-          variant="outlined"
-          size="small"
-        >
-          <InputLabel id="price-label">
-          Price*
-          </InputLabel>
-          <Controller
-            rules={{ required: true }}
-            as={(
-              <Select
-                labelId="price-label"
-                label="Locality"
-                error={Boolean(errors.price_id)}
-              >
-                <MenuItem value="">
-                None
-                </MenuItem>
-                {prices?.map((price) => (
-                  <MenuItem
-                    key={price.title}
-                    value={price.price_id}
-                  >
-                    {price.title}
-                  </MenuItem>
-                ))}
-              </Select>
-            )}
-            name="price_id"
-            control={control}
-            defaultValue=""
-          />
-          <FormHelperText error={true}>{errors.price_id ? 'Field is required' : ' '}</FormHelperText>
-        </FormControl>
 
-        <FormControl
-          variant="outlined"
-          size="small"
+        <SelectControl
+          label="Price*"
+          name="price_id"
+          control={control}
+          error={Boolean(errors.price_id)}
+          helperText={errors.price_id ? 'Field is required' : ' '}
         >
-          <InputLabel id="daytime-label">
-            Daytime*
-          </InputLabel>
-          <Controller
-            rules={{ required: true }}
-            as={(
-              <Select
-                labelId="daytime-label"
-                inputProps={{ name: 'daytime_id' }}
-                label="Locality"
-                error={Boolean(errors.daytime_id)}
-              >
-                <MenuItem value="">
-                  None
-                </MenuItem>
-                {daytimes?.map((daytime) => (
-                  <MenuItem
-                    key={daytime.title}
-                    value={daytime.daytime_id}
-                  >
-                    {daytime.title}
-                  </MenuItem>
-                ))}
-              </Select>
-            )}
-            name="daytime_id"
-            control={control}
-            defaultValue=""
-          />
-          <FormHelperText error={true}>{errors.daytime_id ? 'Field is required' : ' '}</FormHelperText>
-        </FormControl>
+          {prices?.map((price) => (
+            <MenuItem
+              key={price.title}
+              value={price.price_id}
+            >
+              {price.title}
+            </MenuItem>
+          ))}
+        </SelectControl>
+
+        <SelectControl
+          label="Daytime*"
+          name="daytime_id"
+          control={control}
+          error={Boolean(errors.daytime_id)}
+          helperText={errors.daytime_id ? 'Field is required' : ' '}
+        >
+          {daytimes?.map((daytime) => (
+            <MenuItem
+              key={daytime.title}
+              value={daytime.daytime_id}
+            >
+              {daytime.title}
+            </MenuItem>
+          ))}
+        </SelectControl>
 
         <TextField
           inputRef={register({ required: true })}
