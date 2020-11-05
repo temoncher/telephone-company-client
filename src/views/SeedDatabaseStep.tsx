@@ -5,10 +5,9 @@ import {
   Button,
   Typography,
 } from '@material-ui/core';
+import seedDatabaseSQL from '@sql/Seed.sql';
 
 import { useOnboardingStyles } from '@/styles/onboarding-styles';
-
-import seedDatabaseSQL from '@sql/Seed.sql';
 
 import ExecutionProgress from '../components/ExecutionProgress';
 import SqlCodeBlock from '../components/SqlCodeBlock';

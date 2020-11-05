@@ -4,10 +4,6 @@ import {
   Button,
   IconButton,
   TextField,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  Select,
   MenuItem,
   Typography,
 } from '@material-ui/core';
@@ -15,11 +11,12 @@ import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
 import createCallSql from '@sql/Calls/CreateCall.sql';
 import camelcase from 'camelcase';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
 import CodeButtons from '@/components/CodeButtons';
 import Layout from '@/components/Layout';
+import SelectControl from '@/components/SelectControl';
 import { ICall } from '@/interfaces/call.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
@@ -172,119 +169,56 @@ const Calls: React.FC = () => {
       className={globalClasses.editorForm}
       onSubmit={handleSubmit(handleSubmitClick)}
     >
-      <FormControl
-        variant="outlined"
-        size="small"
+      <SelectControl
+        label="Subscriber*"
+        name="subscriber_id"
+        control={control}
+        error={Boolean(errors.subscriber_id)}
+        helperText={errors.subscriber_id ? 'Field is required' : ' '}
       >
-        <InputLabel id="subscriber-label">
-          Subscriber*
-        </InputLabel>
-        <Controller
-          rules={{ required: true }}
-          as={
-            <Select
-              labelId="subscriber-label"
-              inputProps={{
-                name: 'subscriber_id',
-              }}
-              label="Account"
-              error={Boolean(errors.subscriber_id)}
-            >
-              <MenuItem value="">
-                None
-              </MenuItem>
-              {subscribers?.map((subscriber) => (
-                <MenuItem
-                  key={`subscriber_${subscriber.subscriber_id}`}
-                  value={subscriber.subscriber_id}
-                >
-                  {subscriber.first_name} {subscriber.last_name}
-                </MenuItem>
-              ))}
-            </Select>
-          }
-          name="subscriber_id"
-          control={control}
-          defaultValue=""
-        />
-        <FormHelperText error={true}>{errors.subscriber_id ? 'Field is required' : ' '}</FormHelperText>
-      </FormControl>
+        {subscribers?.map((subscriber) => (
+          <MenuItem
+            key={`subscriber_${subscriber.subscriber_id}`}
+            value={subscriber.subscriber_id}
+          >
+            {subscriber.first_name} {subscriber.last_name}
+          </MenuItem>
+        ))}
+      </SelectControl>
 
-      <FormControl
-        variant="outlined"
-        size="small"
+      <SelectControl
+        label="Locality*"
+        name="locality_id"
+        control={control}
+        error={Boolean(errors.locality_id)}
+        helperText={errors.locality_id ? 'Field is required' : ' '}
       >
-        <InputLabel id="locality-label">
-          Locality*
-        </InputLabel>
-        <Controller
-          rules={{ required: true }}
-          as={
-            <Select
-              labelId="locality-label"
-              inputProps={{
-                name: 'locality_id',
-              }}
-              label="Account"
-              error={Boolean(errors.locality_id)}
-            >
-              <MenuItem value="">
-                None
-              </MenuItem>
-              {localities?.map((locality) => (
-                <MenuItem
-                  key={`locality_${locality.locality_id}`}
-                  value={locality.locality_id}
-                >
-                  {locality.name}
-                </MenuItem>
-              ))}
-            </Select>
-          }
-          name="locality_id"
-          control={control}
-          defaultValue=""
-        />
-        <FormHelperText error={true}>{errors.locality_id ? 'Field is required' : ' '}</FormHelperText>
-      </FormControl>
+        {localities?.map((locality) => (
+          <MenuItem
+            key={`locality_${locality.locality_id}`}
+            value={locality.locality_id}
+          >
+            {locality.name}
+          </MenuItem>
+        ))}
+      </SelectControl>
 
-      <FormControl
-        variant="outlined"
-        size="small"
+      <SelectControl
+        label="Daytime*"
+        name="daytime_id"
+        control={control}
+        error={Boolean(errors.daytime_id)}
+        helperText={errors.daytime_id ? 'Field is required' : ' '}
       >
-        <InputLabel id="daytime-label">
-          Daytime*
-        </InputLabel>
-        <Controller
-          rules={{ required: true }}
-          as={
-            <Select
-              labelId="daytime-label"
-              inputProps={{
-                name: 'daytime_id',
-              }}
-              label="Account"
-              error={Boolean(errors.daytime_id)}
-            >
-              <MenuItem value="">
-                None
-              </MenuItem>
-              {daytimes?.map((daytime) => (
-                <MenuItem
-                  key={`daytime_${daytime.daytime_id}`}
-                  value={daytime.daytime_id}
-                >
-                  {daytime.title}
-                </MenuItem>
-              ))}
-            </Select>
-          }
-          name="daytime_id"
-          control={control}
-          defaultValue=""
-        />
-        <FormHelperText error={true}>{errors.daytime_id ? 'Field is required' : ' '}</FormHelperText>
-      </FormControl>
+        {daytimes?.map((daytime) => (
+          <MenuItem
+            key={`daytime_${daytime.daytime_id}`}
+            value={daytime.daytime_id}
+          >
+            {daytime.title}
+          </MenuItem>
+        ))}
+      </SelectControl>
 
       <TextField
         inputRef={register({ required: true })}
@@ -292,6 +226,7 @@ const Calls: React.FC = () => {
         name="duration"
         label="Duration*"
         variant="outlined"
+        type="number"
         InputLabelProps={{ shrink: Boolean(values.duration) }}
         error={Boolean(errors.duration)}
         helperText={errors.duration ? 'Field is required' : ' '}

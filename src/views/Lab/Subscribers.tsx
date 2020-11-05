@@ -16,6 +16,7 @@ import { useQuery } from 'react-query';
 
 import CodeButtons from '@/components/CodeButtons';
 import Layout from '@/components/Layout';
+import SelectControl from '@/components/SelectControl';
 import { ISubscriber } from '@/interfaces/subscriber.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
@@ -24,7 +25,6 @@ import { SqlParseVariableOption } from '@/utlis/parse-sql';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
-import SelectControl from '@/components/SelectControl';
 
 type SubscriberForm = Stringified<Omit<ISubscriber, 'subscriber_id'>>
 

@@ -5,9 +5,9 @@ import {
   Button,
   Typography,
 } from '@material-ui/core';
+import createRolesSQL from '@sql/CreateRoles.sql';
 
 import { useOnboardingStyles } from '@/styles/onboarding-styles';
-import createRolesSQL from '@sql/CreateRoles.sql';
 
 import ExecutionProgress from '../components/ExecutionProgress';
 import SqlCodeBlock from '../components/SqlCodeBlock';
