@@ -1,13 +1,15 @@
 import * as React from 'react';
 
 import {
-  Button,
   IconButton,
   TextField,
-  Paper,
 } from '@material-ui/core';
-import { DataGrid, ColDef } from '@material-ui/data-grid';
+import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
+import createOrganisationSql from '@sql/Organisations/CreateOrganisation.sql';
+import deleteOrganisationSql from '@sql/Organisations/DeleteOrganisation.sql';
+import updateOrganisationSql from '@sql/Organisations/UpdateOrganisation.sql';
+import camelcase from 'camelcase';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -17,6 +19,9 @@ import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
 
 import ApiServiceContext from '../../contexts/api-service.context';
+import Layout from '@/components/Layout';
+import CodeButtons from '@/components/CodeButtons';
+import { SqlParseVariableOption } from '@/utlis/parse-sql';
 
 type OrganisationForm = Stringified<Omit<IOrganisation, 'organisation_id'>>
 
@@ -35,6 +40,17 @@ const Organisations: React.FC = () => {
   const columns: ColDef[] = createColumns(organisations ? organisations[0] : {});
   const rows = organisations?.map((organisation, index) => ({ id: index, ...organisation }));
   const values = watch();
+
+  const parseOptions: Record<string, SqlParseVariableOption> = {
+    [camelcase('name')]: {
+      value: values.name,
+      int: true,
+    },
+    [camelcase('organisation_id')]: {
+      value: selectedRow?.organisation_id,
+      int: true,
+    },
+  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -71,67 +87,48 @@ const Organisations: React.FC = () => {
   };
 
   return (
-    <>
-      <Paper
-        className={globalClasses.dataGrid}
-      >
-        {rows && (
-          <DataGrid
-            columns={columns}
-            rows={rows}
-            onRowClick={({ data }) => setSelectedRow(data as IOrganisation & { id: number })}
-          />
-        )}
-
-      </Paper>
-      <Paper className={globalClasses.editor}>
-        <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit organisation' : 'Create new organisation'}
-          {selectedRow && (
-            <IconButton
-              size="small"
-              onClick={() => setSelectedRow(null)}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          )}
-        </div>
-        <form
-          className={globalClasses.editorForm}
-          onSubmit={handleSubmit(handleSubmitClick)}
-        >
-          <TextField
-            inputRef={register({ required: true })}
+    <Layout
+      cols={columns}
+      rows={rows}
+      onRowClick={({ data }) => setSelectedRow(data as IOrganisation & { id: number })}
+    >
+      <div className={globalClasses.editorHeader}>
+        {selectedRow ? 'Edit organisation' : 'Create new organisation'}
+        {selectedRow && (
+          <IconButton
             size="small"
-            name="name"
-            label="Name*"
-            variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.name) }}
-            error={Boolean(errors.name)}
-            helperText={errors.name ? 'Field is required' : ' '}
-          />
-
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!(formState.isDirty && formState.isValid)}
+            onClick={() => setSelectedRow(null)}
           >
-            {selectedRow ? 'Edit' : 'Create'}
-          </Button>
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        )}
+      </div>
+      <form
+        className={globalClasses.editorForm}
+        onSubmit={handleSubmit(handleSubmitClick)}
+      >
+        <TextField
+          inputRef={register({ required: true })}
+          size="small"
+          name="name"
+          label="Name*"
+          variant="outlined"
+          InputLabelProps={{ shrink: Boolean(values.name) }}
+          error={Boolean(errors.name)}
+          helperText={errors.name ? 'Field is required' : ' '}
+        />
 
-          {selectedRow && (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={deleteRow}
-            >
-              Delete
-            </Button>
-          )}
-        </form>
-      </Paper>
-    </>
+        <CodeButtons
+          parseOptions={parseOptions}
+          createSql={createOrganisationSql}
+          updateSql={updateOrganisationSql}
+          deleteSql={deleteOrganisationSql}
+          onDeleteClick={deleteRow}
+          selected={selectedRow}
+          disabled={!(formState.isDirty && formState.isValid)}
+        />
+      </form>
+    </Layout>
   );
 };
 

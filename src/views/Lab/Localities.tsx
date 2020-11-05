@@ -3,10 +3,8 @@ import * as React from 'react';
 import {
   IconButton,
   TextField,
-  Paper,
-  Grid,
 } from '@material-ui/core';
-import { DataGrid, ColDef } from '@material-ui/data-grid';
+import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
 import createLocalitySql from '@sql/Localities/CreateLocality.sql';
 import deleteLocalitySql from '@sql/Localities/DeleteLocality.sql';
@@ -16,6 +14,7 @@ import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
 import CodeButtons from '@/components/CodeButtons';
+import Layout from '@/components/Layout';
 import { ILocality } from '@/interfaces/locality.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
@@ -86,68 +85,48 @@ const Localities: React.FC = () => {
   };
 
   return (
-    <Grid
-      container
-      spacing={2}
+    <Layout
+      cols={columns}
+      rows={rows}
+      onRowClick={({ data }) => setSelectedRow(data as ILocality & { id: number })}
     >
-      <Grid
-        item
-        xs={8}
-      >
-        <Paper className={globalClasses.dataGrid}>
-          {rows && (
-            <DataGrid
-              columns={columns}
-              rows={rows}
-              onRowClick={({ data }) => setSelectedRow(data as ILocality & { id: number })}
-            />
-          )}
-        </Paper>
-      </Grid>
-      <Grid
-        item
-        xs={4}
-      >
-        <Paper className={globalClasses.editor}>
-          <div className={globalClasses.editorHeader}>
-            {selectedRow ? 'Edit locality' : 'Create new locality'}
-            {selectedRow && (
-              <IconButton
-                size="small"
-                onClick={() => setSelectedRow(null)}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            )}
-          </div>
-          <form
-            className={globalClasses.editorForm}
-            onSubmit={handleSubmit(handleSubmitClick)}
+      <div className={globalClasses.editorHeader}>
+        {selectedRow ? 'Edit locality' : 'Create new locality'}
+        {selectedRow && (
+          <IconButton
+            size="small"
+            onClick={() => setSelectedRow(null)}
           >
-            <TextField
-              inputRef={register({ required: true })}
-              size="small"
-              name="name"
-              label="Name*"
-              variant="outlined"
-              InputLabelProps={{ shrink: Boolean(values.name) }}
-              error={Boolean(errors.name)}
-              helperText={errors.name ? 'Field is required' : ' '}
-            />
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        )}
+      </div>
+      <form
+        className={globalClasses.editorForm}
+        onSubmit={handleSubmit(handleSubmitClick)}
+      >
+        <TextField
+          inputRef={register({ required: true })}
+          size="small"
+          name="name"
+          label="Name*"
+          variant="outlined"
+          InputLabelProps={{ shrink: Boolean(values.name) }}
+          error={Boolean(errors.name)}
+          helperText={errors.name ? 'Field is required' : ' '}
+        />
 
-            <CodeButtons
-              parseOptions={parseOptions}
-              createSql={createLocalitySql}
-              updateSql={updateLocalitySql}
-              deleteSql={deleteLocalitySql}
-              selected={selectedRow}
-              disabled={!(formState.isDirty && formState.isValid)}
-              onDeleteClick={deleteRow}
-            />
-          </form>
-        </Paper>
-      </Grid>
-    </Grid>
+        <CodeButtons
+          parseOptions={parseOptions}
+          createSql={createLocalitySql}
+          updateSql={updateLocalitySql}
+          deleteSql={deleteLocalitySql}
+          selected={selectedRow}
+          disabled={!(formState.isDirty && formState.isValid)}
+          onDeleteClick={deleteRow}
+        />
+      </form>
+    </Layout>
   );
 };
 
