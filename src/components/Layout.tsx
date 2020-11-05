@@ -4,6 +4,7 @@ import {
   Paper,
   Grid,
   IconButton,
+  Box,
 } from '@material-ui/core';
 import { DataGrid, ColDef, RowParams, RowsProp } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -59,15 +60,15 @@ const Layout: React.FC<LayoutProps> = ({
           { viewSql && isViewCodeShown
             ? (
               <>
-                <div className={globalClasses.editorHeader}>
-                  <div>View code</div>
+                <Box className={globalClasses.editorHeader}>
+                  <Box>View code</Box>
                   <IconButton
                     size="small"
                     onClick={() => setIsViewCodeShown(false)}
                   >
                     <CloseIcon fontSize="small" />
                   </IconButton>
-                </div>
+                </Box>
                 <SqlCodeBlock text={viewSql} />
               </>
             ) : children }

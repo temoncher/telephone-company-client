@@ -9,6 +9,7 @@ import {
   ListSubheader,
   makeStyles,
   IconButton,
+  Box,
   Divider,
 } from '@material-ui/core';
 import CachedIcon from '@material-ui/icons/Cached';
@@ -131,7 +132,7 @@ const Lab: React.FC = () => {
   const otherRole = role === Role.ADMIN ? Role.MANAGER : Role.ADMIN;
 
   return (
-    <div className={classes.root}>
+    <Box className={classes.root}>
       <Drawer
         className={classes.drawer}
         variant="permanent"
@@ -153,8 +154,10 @@ const Lab: React.FC = () => {
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
+
           <Divider />
           <ListSubheader>API</ListSubheader>
+
           {menuItems.map((item) => (
             <ListItem
               button
@@ -168,7 +171,9 @@ const Lab: React.FC = () => {
               />
             </ListItem>
           ))}
+
           <Divider />
+
           <ListItem
             button
             onClick={() => {
@@ -199,7 +204,7 @@ const Lab: React.FC = () => {
           ))}
         </Switch>
       </main>
-    </div>
+    </Box>
   );
 };
 

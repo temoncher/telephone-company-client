@@ -6,6 +6,7 @@ import {
   TextField,
   MenuItem,
   Typography,
+  Box,
 } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -109,7 +110,7 @@ const Calls: React.FC = () => {
     const isDeleted = Boolean(selectedRow?.deleted_at);
 
     return(
-      <div className={globalClasses.editorForm}>
+      <Box className={globalClasses.editorForm}>
         <Typography variant="body1">
           Calls can not be edited due to balance history integrity reasons
         </Typography>
@@ -135,7 +136,7 @@ const Calls: React.FC = () => {
             </Button>
           )
         }
-      </div>
+      </Box>
     );
   };
 
@@ -223,7 +224,7 @@ const Calls: React.FC = () => {
       rows={rows}
       onRowClick={({ data }) => setSelectedRow(data as ICall & { id: number })}
     >
-      <div className={globalClasses.editorHeader}>
+      <Box className={globalClasses.editorHeader}>
         <Typography variant="body1">
           {selectedRow ? 'Delete call' : 'Create new call'}
         </Typography>
@@ -235,7 +236,7 @@ const Calls: React.FC = () => {
             <CloseIcon fontSize="small" />
           </IconButton>
         )}
-      </div>
+      </Box>
       {selectedRow ? renderWarning() : renderForm()}
     </Layout>
   );

@@ -3,6 +3,7 @@ import * as React from 'react';
 import {
   IconButton,
   TextField,
+  Box,
 } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -79,7 +80,7 @@ const Organisations: React.FC = () => {
       rows={rows}
       onRowClick={({ data }) => setSelectedRow(data as IOrganisation & { id: number })}
     >
-      <div className={globalClasses.editorHeader}>
+      <Box className={globalClasses.editorHeader}>
         {selectedRow ? 'Edit organisation' : 'Create new organisation'}
         {selectedRow && (
           <IconButton
@@ -89,7 +90,7 @@ const Organisations: React.FC = () => {
             <CloseIcon fontSize="small" />
           </IconButton>
         )}
-      </div>
+      </Box>
       <form
         className={globalClasses.editorForm}
         onSubmit={handleSubmit(handleSubmitClick)}

@@ -6,6 +6,7 @@ import {
   makeStyles,
   Theme,
   createStyles,
+  Box,
 } from '@material-ui/core';
 import CodeIcon from '@material-ui/icons/Code';
 import camelcase from 'camelcase';
@@ -82,12 +83,12 @@ const CodeButtons: React.FC<CodeButtonsProps> = ({
       </ButtonGroup>
 
       {isFormCodeShown && (
-        <div className={classes.marginTop}>
+        <Box className={classes.marginTop}>
           {selected
             ? updateSql && <SqlCodeBlock text={parseSql(updateSql, parseOptions)} />
             : createSql && <SqlCodeBlock text={parseSql(createSql, parseOptions)} />
           }
-        </div>
+        </Box>
       )}
 
       {onDeleteClick && (
@@ -112,9 +113,9 @@ const CodeButtons: React.FC<CodeButtonsProps> = ({
           )}
 
           {isDeleteCodeShown && selected && deleteSql && (
-            <div className={classes.marginTop}>
+            <Box className={classes.marginTop}>
               <SqlCodeBlock text={parseSql(deleteSql, parseOptions)} />
-            </div>
+            </Box>
           )}
         </>
       )}

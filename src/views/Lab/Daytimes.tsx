@@ -3,6 +3,7 @@ import * as React from 'react';
 import {
   IconButton,
   TextField,
+  Box,
 } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -79,7 +80,7 @@ const Daytimes: React.FC = () => {
       rows={rows}
       onRowClick={({ data }) => setSelectedRow(data as IDaytime & { id: number })}
     >
-      <div className={globalClasses.editorHeader}>
+      <Box className={globalClasses.editorHeader}>
         {selectedRow ? 'Edit daytime' : 'Create new daytime'}
         {selectedRow && (
           <IconButton
@@ -89,7 +90,7 @@ const Daytimes: React.FC = () => {
             <CloseIcon fontSize="small" />
           </IconButton>
         )}
-      </div>
+      </Box>
       <form
         className={globalClasses.editorForm}
         onSubmit={handleSubmit(handleSubmitClick)}

@@ -4,6 +4,7 @@ import {
   IconButton,
   TextField,
   MenuItem,
+  Box,
 } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -91,7 +92,7 @@ const Prices: React.FC = () => {
       viewSql={pricesTableSql}
       onRowClick={({ data }) => setSelectedRow(data as IPrice & { id: number })}
     >
-      <div className={globalClasses.editorHeader}>
+      <Box className={globalClasses.editorHeader}>
         {selectedRow ? 'Edit price' : 'Create new price'}
         {selectedRow && (
           <IconButton
@@ -101,7 +102,7 @@ const Prices: React.FC = () => {
             <CloseIcon fontSize="small" />
           </IconButton>
         )}
-      </div>
+      </Box>
       <form
         className={globalClasses.editorForm}
         onSubmit={handleSubmit(handleSubmitClick)}

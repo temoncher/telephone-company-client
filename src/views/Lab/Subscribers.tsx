@@ -4,6 +4,7 @@ import {
   IconButton,
   TextField,
   MenuItem,
+  Box,
 } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
@@ -95,7 +96,7 @@ const Subscribers: React.FC = () => {
       rows={rows}
       onRowClick={({ data }) => setSelectedRow(data as ISubscriber & { id: number })}
     >
-      <div className={globalClasses.editorHeader}>
+      <Box className={globalClasses.editorHeader}>
         {selectedRow ? 'Edit subscriber' : 'Create new subscriber'}
         {selectedRow && (
           <IconButton
@@ -105,7 +106,7 @@ const Subscribers: React.FC = () => {
             <CloseIcon fontSize="small" />
           </IconButton>
         )}
-      </div>
+      </Box>
       <form
         className={globalClasses.editorForm}
         onSubmit={handleSubmit(handleSubmitClick)}

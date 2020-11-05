@@ -8,6 +8,7 @@ import { makeStyles, createStyles } from '@material-ui/core/styles';
 
 import { OnboardingStepAlias } from '@/enums/onboarding-step-alias';
 import { IOnboardingStep } from '@/interfaces/onboarding-step.interface';
+import { Box } from '@material-ui/core';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -26,7 +27,7 @@ const OnboardingStepper: React.FC<OnboardingStepperProps> = ({ steps, activeStep
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <Box className={classes.root}>
       <Stepper
         activeStep={activeStep}
         orientation="vertical"
@@ -40,7 +41,7 @@ const OnboardingStepper: React.FC<OnboardingStepperProps> = ({ steps, activeStep
           </Step>
         ))}
       </Stepper>
-    </div>
+    </Box>
   );
 };
 
