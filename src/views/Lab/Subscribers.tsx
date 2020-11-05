@@ -1,28 +1,30 @@
 import * as React from 'react';
 
 import {
-  Button,
   IconButton,
   TextField,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  Select,
   MenuItem,
-  Paper,
 } from '@material-ui/core';
-import { DataGrid, ColDef } from '@material-ui/data-grid';
+import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
-import { useForm, Controller } from 'react-hook-form';
+import createSubscriberSql from '@sql/Subscribers/CreateSubscriber.sql';
+import deleteSubscriberSql from '@sql/Subscribers/DeleteSubscriber.sql';
+import updateSubscriberSql from '@sql/Subscribers/UpdateSubscriber.sql';
+import camelcase from 'camelcase';
+import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
+import CodeButtons from '@/components/CodeButtons';
+import Layout from '@/components/Layout';
 import { ISubscriber } from '@/interfaces/subscriber.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
+import { SqlParseVariableOption } from '@/utlis/parse-sql';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
+import SelectControl from '@/components/SelectControl';
 
 type SubscriberForm = Stringified<Omit<ISubscriber, 'subscriber_id'>>
 
@@ -48,6 +50,33 @@ const Subscribers: React.FC = () => {
   const columns: ColDef[] = createColumns(subscribers ? subscribers[0] : {});
   const rows = subscribers?.map((subscriber, index) => ({ id: index, ...subscriber }));
   const values = watch();
+
+  const parseOptions: Record<string, SqlParseVariableOption> = {
+    [camelcase('adress')]: {
+      value: values.adress,
+    },
+    [camelcase('first_name')]: {
+      value: values.first_name,
+    },
+    [camelcase('inn')]: {
+      value: values.inn,
+      int: true,
+    },
+    [camelcase('last_name')]: {
+      value: values.last_name,
+    },
+    [camelcase('organisation_id')]: {
+      value: values.organisation_id,
+      int: true,
+    },
+    [camelcase('patronymic')]: {
+      value: values.patronymic,
+    },
+    [camelcase('subscriber_id')]: {
+      value: selectedRow?.subscriber_id,
+      int: true,
+    },
+  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -90,141 +119,106 @@ const Subscribers: React.FC = () => {
   };
 
   return (
-    <>
-      <Paper className={globalClasses.dataGrid}>
-        {rows && (
-          <DataGrid
-            columns={columns}
-            rows={rows}
-            onRowClick={({ data }) => setSelectedRow(data as ISubscriber & { id: number })}
-          />
+    <Layout
+      cols={columns}
+      rows={rows}
+      onRowClick={({ data }) => setSelectedRow(data as ISubscriber & { id: number })}
+    >
+      <div className={globalClasses.editorHeader}>
+        {selectedRow ? 'Edit subscriber' : 'Create new subscriber'}
+        {selectedRow && (
+          <IconButton
+            size="small"
+            onClick={() => setSelectedRow(null)}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
         )}
-      </Paper>
-      <Paper className={globalClasses.editor}>
-        <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit subscriber' : 'Create new subscriber'}
-          {selectedRow && (
-            <IconButton
-              size="small"
-              onClick={() => setSelectedRow(null)}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          )}
-        </div>
-        <form
-          className={globalClasses.editorForm}
-          onSubmit={handleSubmit(handleSubmitClick)}
+      </div>
+      <form
+        className={globalClasses.editorForm}
+        onSubmit={handleSubmit(handleSubmitClick)}
+      >
+        <SelectControl
+          label="Organisation*"
+          name="organisation_id"
+          control={control}
+          error={Boolean(errors.organisation_id)}
+          helperText={errors.organisation_id ? 'Field is required' : ' '}
         >
-          <TextField
-            inputRef={register({ required: true })}
-            size="small"
-            name="inn"
-            label="INN*"
-            variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.inn) }}
-            error={Boolean(errors.inn)}
-            helperText={errors.inn ? 'Field is required' : ' '}
-          />
-          <TextField
-            inputRef={register({ required: true })}
-            size="small"
-            name="first_name"
-            label="First name*"
-            variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.first_name) }}
-            error={Boolean(errors.first_name)}
-            helperText={errors.first_name ? 'Field is required' : ' '}
-          />
-          <TextField
-            inputRef={register({ required: true })}
-            size="small"
-            name="last_name"
-            label="Last name*"
-            variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.last_name) }}
-            error={Boolean(errors.last_name)}
-            helperText={errors.last_name ? 'Field is required' : ' '}
-          />
-          <TextField
-            inputRef={register()}
-            size="small"
-            name="patronymic"
-            label="Patronymic"
-            variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.patronymic) }}
-            error={Boolean(errors.patronymic)}
-            helperText={errors.patronymic ? 'Field is required' : ' '}
-          />
-          <TextField
-            inputRef={register()}
-            size="small"
-            name="adress"
-            label="Adress"
-            variant="outlined"
-            InputLabelProps={{ shrink: Boolean(values.adress) }}
-            error={Boolean(errors.patronymic)}
-            helperText={errors.adress ? 'Field is required' : ' '}
-          />
-          <FormControl
-            variant="outlined"
-            size="small"
-          >
-            <InputLabel id="organisation-label">
-              Organisation*
-            </InputLabel>
-            <Controller
-              rules={{ required: true }}
-              as={
-                <Select
-                  labelId="organisation-label"
-                  inputProps={{
-                    name: 'organisation_id',
-                  }}
-                  label="Locality"
-                  error={Boolean(errors.organisation_id)}
-                >
-                  <MenuItem value="">
-                    None
-                  </MenuItem>
-                  {organisations?.map((organisation) => (
-                    <MenuItem
-                      key={organisation.name}
-                      value={organisation.organisation_id}
-                    >
-                      {organisation.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              }
-              name="organisation_id"
-              control={control}
-              defaultValue=""
-            />
-            <FormHelperText error={true}>{errors.organisation_id ? 'Field is required' : ' '}</FormHelperText>
-          </FormControl>
-
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!(formState.isDirty && formState.isValid)}
-          >
-            {selectedRow ? 'Edit' : 'Create'}
-          </Button>
-
-          {selectedRow && (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={deleteRow}
+          {organisations?.map((organisation) => (
+            <MenuItem
+              key={organisation.name}
+              value={organisation.organisation_id}
             >
-              Delete
-            </Button>
-          )}
-        </form>
-      </Paper>
-    </>
+              {organisation.name}
+            </MenuItem>
+          ))}
+        </SelectControl>
+
+        <TextField
+          inputRef={register({ required: true })}
+          size="small"
+          name="inn"
+          label="INN*"
+          variant="outlined"
+          type="number"
+          InputLabelProps={{ shrink: Boolean(values.inn) }}
+          error={Boolean(errors.inn)}
+          helperText={errors.inn ? 'Field is required' : ' '}
+        />
+        <TextField
+          inputRef={register({ required: true })}
+          size="small"
+          name="first_name"
+          label="First name*"
+          variant="outlined"
+          InputLabelProps={{ shrink: Boolean(values.first_name) }}
+          error={Boolean(errors.first_name)}
+          helperText={errors.first_name ? 'Field is required' : ' '}
+        />
+        <TextField
+          inputRef={register({ required: true })}
+          size="small"
+          name="last_name"
+          label="Last name*"
+          variant="outlined"
+          InputLabelProps={{ shrink: Boolean(values.last_name) }}
+          error={Boolean(errors.last_name)}
+          helperText={errors.last_name ? 'Field is required' : ' '}
+        />
+        <TextField
+          inputRef={register()}
+          size="small"
+          name="patronymic"
+          label="Patronymic"
+          variant="outlined"
+          InputLabelProps={{ shrink: Boolean(values.patronymic) }}
+          error={Boolean(errors.patronymic)}
+          helperText={errors.patronymic ? 'Field is required' : ' '}
+        />
+        <TextField
+          inputRef={register()}
+          size="small"
+          name="adress"
+          label="Adress"
+          variant="outlined"
+          InputLabelProps={{ shrink: Boolean(values.adress) }}
+          error={Boolean(errors.patronymic)}
+          helperText={errors.adress ? 'Field is required' : ' '}
+        />
+
+        <CodeButtons
+          parseOptions={parseOptions}
+          createSql={createSubscriberSql}
+          updateSql={updateSubscriberSql}
+          deleteSql={deleteSubscriberSql}
+          selected={selectedRow}
+          disabled={!(formState.isDirty && formState.isValid)}
+          onDeleteClick={deleteRow}
+        />
+      </form>
+    </Layout>
   );
 };
 

@@ -25,8 +25,5 @@ export const useGlobalStyles = makeStyles((theme: Theme) => ({
   editorForm: {
     display: 'flex',
     flexDirection: 'column',
-    '& > :not(:last-child)': {
-      marginBottom: theme.spacing(1),
-    },
   },
 }));
