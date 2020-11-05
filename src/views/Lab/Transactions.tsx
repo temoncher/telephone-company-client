@@ -121,7 +121,7 @@ const Transactions: React.FC = () => {
             key={`account_${account.account_id}`}
             value={account.account_id}
           >
-            {`${account.subscriber_full_name}`}
+            {`${account.subscriber_full_name}(${account.balance})`}
           </MenuItem>
         ))}
       </SelectControl>
