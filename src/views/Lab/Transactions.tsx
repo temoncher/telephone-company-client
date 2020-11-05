@@ -10,6 +10,7 @@ import {
 import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
 import createTransactionSql from '@sql/Transactions/CreateTransaction.sql';
+import transactionsTableSql from '@sql/Views/TransactionsGlobalView.sql';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -36,13 +37,13 @@ const Transactions: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ITransaction & { id: number } | null>(null);
   const { register, handleSubmit, errors, reset, watch, control, formState } = useForm<TransactionForm>({ defaultValues, mode: 'onChange' });
-  const { data: transactionsData, refetch: refetchTransactions } = useQuery('transactions', apiService.transactionApi.getAllTransactions);
-  const { data: accountsData } = useQuery('accounts', apiService.accountApi.getAllAccounts);
+  const { data: transactionsData, refetch: refetchTransactions } = useQuery('transactions', apiService.transactionApi.getTransactionsTable);
+  const { data: accountsTableData } = useQuery('accounts', apiService.accountApi.getAccountsTable);
   const { data: transactionTypesData } = useQuery('transactionTypes', apiService.transactionTypeApi.getAllTransactionTypes);
   const globalClasses = useGlobalStyles();
 
   const transactions = transactionsData?.data;
-  const accounts = accountsData?.data;
+  const accountsTable = accountsTableData?.data;
   const transactionTypes = transactionTypesData?.data;
   const columns: ColDef[] = createColumns(transactions ? transactions[0] : {});
   const rows = transactions?.map((transaction, index) => ({ id: index, ...transaction }));
@@ -115,12 +116,12 @@ const Transactions: React.FC = () => {
         error={Boolean(errors.account_id)}
         helperText={errors.account_id ? 'Field is required' : ' '}
       >
-        {accounts?.map((account) => (
+        {accountsTable?.map((account) => (
           <MenuItem
-            key={`${account.subscriber_id}_${account.account_id}`}
+            key={`account_${account.account_id}`}
             value={account.account_id}
           >
-            {`${account.subscriber_id}_${account.account_id}`}
+            {`${account.subscriber_full_name}`}
           </MenuItem>
         ))}
       </SelectControl>
@@ -151,6 +152,7 @@ const Transactions: React.FC = () => {
     <Layout
       cols={columns}
       rows={rows}
+      viewSql={transactionsTableSql}
       onRowClick={({ data }) => setSelectedRow(data as ITransaction & { id: number })}
     >
       <Box className={globalClasses.editorHeader}>
