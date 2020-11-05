@@ -1,23 +1,21 @@
 import * as React from 'react';
 
 import {
-  Button,
   IconButton,
   TextField,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  Select,
   MenuItem,
   Typography,
-  Paper,
+  Box,
 } from '@material-ui/core';
-import { DataGrid, ColDef } from '@material-ui/data-grid';
+import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
 import createTransactionSql from '@sql/Transactions/CreateTransaction.sql';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
+import CodeButtons from '@/components/CodeButtons';
+import Layout from '@/components/Layout';
+import SelectControl from '@/components/SelectControl';
 import { ITransaction } from '@/interfaces/transaction.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
@@ -25,9 +23,6 @@ import { createColumns } from '@/utlis/create-columns';
 import { stringifyObjectProperites } from '@/utlis/stringify';
 
 import ApiServiceContext from '../../contexts/api-service.context';
-import SelectControl from '@/components/SelectControl';
-import CodeButtons from '@/components/CodeButtons';
-import Layout from '@/components/Layout';
 
 type TransactionForm = Stringified<Omit<Stringified<ITransaction>, 'transaction_id' | 'timestamp'>>;
 
@@ -158,7 +153,7 @@ const Transactions: React.FC = () => {
       rows={rows}
       onRowClick={({ data }) => setSelectedRow(data as ITransaction & { id: number })}
     >
-      <div className={globalClasses.editorHeader}>
+      <Box className={globalClasses.editorHeader}>
         {selectedRow ? 'Edit daytime price' : 'Create new transaction'}
         {selectedRow && (
           <IconButton
@@ -168,7 +163,7 @@ const Transactions: React.FC = () => {
             <CloseIcon fontSize="small" />
           </IconButton>
         )}
-      </div>
+      </Box>
       {selectedRow ? renderWarning() : renderForm()}
     </Layout>
   );
