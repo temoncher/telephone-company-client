@@ -38,7 +38,7 @@ const defaultValues: SubscriberForm = {
 const Subscribers: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ISubscriber & { id: number } | null>(null);
-  const { register, handleSubmit, control, errors, reset, formState } = useForm<SubscriberForm>({ defaultValues, mode: 'onChange' });
+  const { register, handleSubmit, control, errors, reset, watch, formState } = useForm<SubscriberForm>({ defaultValues, mode: 'onChange' });
   const { data: subscribersData, refetch: refetchSubscribers } = useQuery('subscribers', apiService.subscriberApi.getAllSubscribers);
   const { data: organisationsData } = useQuery('organisations', apiService.organisationApi.getAllOrganisations);
   const globalClasses = useGlobalStyles();
@@ -47,6 +47,7 @@ const Subscribers: React.FC = () => {
   const organisations = organisationsData?.data;
   const columns: ColDef[] = createColumns(subscribers ? subscribers[0] : {});
   const rows = subscribers?.map((subscriber, index) => ({ id: index, ...subscriber }));
+  const values = watch();
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -121,7 +122,7 @@ const Subscribers: React.FC = () => {
             name="inn"
             label="INN*"
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{ shrink: Boolean(values.inn) }}
             error={Boolean(errors.inn)}
             helperText={errors.inn ? 'Field is required' : ' '}
           />
@@ -131,7 +132,7 @@ const Subscribers: React.FC = () => {
             name="first_name"
             label="First name*"
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{ shrink: Boolean(values.first_name) }}
             error={Boolean(errors.first_name)}
             helperText={errors.first_name ? 'Field is required' : ' '}
           />
@@ -141,7 +142,7 @@ const Subscribers: React.FC = () => {
             name="last_name"
             label="Last name*"
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{ shrink: Boolean(values.last_name) }}
             error={Boolean(errors.last_name)}
             helperText={errors.last_name ? 'Field is required' : ' '}
           />
@@ -151,7 +152,7 @@ const Subscribers: React.FC = () => {
             name="patronymic"
             label="Patronymic"
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{ shrink: Boolean(values.patronymic) }}
             error={Boolean(errors.patronymic)}
             helperText={errors.patronymic ? 'Field is required' : ' '}
           />
@@ -161,7 +162,7 @@ const Subscribers: React.FC = () => {
             name="adress"
             label="Adress"
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{ shrink: Boolean(values.adress) }}
             error={Boolean(errors.patronymic)}
             helperText={errors.adress ? 'Field is required' : ' '}
           />

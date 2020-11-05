@@ -36,7 +36,7 @@ const defaultValues: TransactionForm = {
 const Transactions: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ITransaction & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset, control, formState } = useForm<TransactionForm>({ defaultValues, mode: 'onChange' });
+  const { register, handleSubmit, errors, reset, watch, control, formState } = useForm<TransactionForm>({ defaultValues, mode: 'onChange' });
   const { data: transactionsData, refetch: refetchTransactions } = useQuery('transactions', apiService.transactionApi.getAllTransactions);
   const { data: accountsData } = useQuery('accounts', apiService.accountApi.getAllAccounts);
   const { data: transactionTypesData } = useQuery('transactionTypes', apiService.transactionTypeApi.getAllTransactionTypes);
@@ -47,6 +47,7 @@ const Transactions: React.FC = () => {
   const transactionTypes = transactionTypesData?.data;
   const columns: ColDef[] = createColumns(transactions ? transactions[0] : {});
   const rows = transactions?.map((transaction, index) => ({ id: index, ...transaction }));
+  const values = watch();
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -173,7 +174,7 @@ const Transactions: React.FC = () => {
         name="amount"
         label="Amount*"
         variant="outlined"
-        InputLabelProps={{ shrink: true }}
+        InputLabelProps={{ shrink: Boolean(values.amount) }}
         error={Boolean(errors.amount)}
         helperText={errors.amount ? 'Field is required' : ' '}
       />

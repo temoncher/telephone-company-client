@@ -112,7 +112,7 @@ const Daytimes: React.FC = () => {
           name="title"
           label="Title*"
           variant="outlined"
-          InputLabelProps={{ shrink: true }}
+          InputLabelProps={{ shrink: Boolean(values.title) }}
           error={Boolean(errors.title)}
           helperText={errors.title ? 'Field is required' : ' '}
         />

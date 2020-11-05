@@ -27,13 +27,14 @@ const defaultValues: Omit<Partial<ITransactionType>, 'transaction_type_id'> = {
 const TransactionTypes: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<ITransactionType & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset, formState } = useForm<TransactionTypeForm>({ defaultValues, mode: 'onChange' });
+  const { register, handleSubmit, errors, reset, watch, formState } = useForm<TransactionTypeForm>({ defaultValues, mode: 'onChange' });
   const { data: transactionTypesData, refetch: refetchTransactionTypes } = useQuery('transactionTypes', apiService.transactionTypeApi.getAllTransactionTypes);
   const globalClasses = useGlobalStyles();
 
   const transactionTypes = transactionTypesData?.data;
   const columns: ColDef[] = createColumns(transactionTypes ? transactionTypes[0] : {});
   const rows = transactionTypes?.map((transactionType, index) => ({ id: index, ...transactionType }));
+  const values = watch();
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -102,7 +103,7 @@ const TransactionTypes: React.FC = () => {
             name="title"
             label="Title*"
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{ shrink: Boolean(values.title) }}
             error={Boolean(errors.title)}
             helperText={errors.title ? 'Field is required' : ' '}
           />
