@@ -44,7 +44,6 @@ const Organisations: React.FC = () => {
   const parseOptions: Record<string, SqlParseVariableOption> = {
     [camelcase('name')]: {
       value: values.name,
-      int: true,
     },
     [camelcase('organisation_id')]: {
       value: selectedRow?.organisation_id,

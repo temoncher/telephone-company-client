@@ -64,6 +64,7 @@ const DaytimePrices: React.FC = () => {
     },
     [camelcase('price_per_minute')]: {
       value: values.price_per_minute,
+      int: true,
     },
   };
 

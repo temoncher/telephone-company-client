@@ -47,6 +47,7 @@ const Localities: React.FC = () => {
     },
     [camelcase('locality_id')]: {
       value: selectedRow?.locality_id,
+      int: true,
     },
   };
 
