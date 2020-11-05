@@ -1,20 +1,25 @@
 import * as React from 'react';
 
 import {
-  Button,
   IconButton,
   TextField,
-  Paper,
 } from '@material-ui/core';
-import { DataGrid, ColDef } from '@material-ui/data-grid';
+import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
+import createDaytimeSql from '@sql/Daytimes/CreateDaytime.sql';
+import deleteDaytimeSql from '@sql/Daytimes/DeleteDaytime.sql';
+import updateDaytimeSql from '@sql/Daytimes/UpdateDaytime.sql';
+import camelcase from 'camelcase';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
+import CodeButtons from '@/components/CodeButtons';
+import Layout from '@/components/Layout';
 import { IDaytime } from '@/interfaces/daytime.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
 import { Stringified } from '@/types/stringified';
 import { createColumns } from '@/utlis/create-columns';
+import { SqlParseVariableOption } from '@/utlis/parse-sql';
 
 import ApiServiceContext from '../../contexts/api-service.context';
 
@@ -27,13 +32,24 @@ const defaultValues: DaytimeForm = {
 const Daytimes: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IDaytime & { id: number } | null>(null);
-  const { register, handleSubmit, errors, reset, formState } = useForm<DaytimeForm>({ defaultValues, mode: 'onChange' });
+  const { register, handleSubmit, errors, reset, watch, formState } = useForm<DaytimeForm>({ defaultValues, mode: 'onChange' });
   const { data: daytimesData, refetch: refetchDaytimes } = useQuery('daytimes', apiService.daytimeApi.getAllDaytimes);
   const globalClasses = useGlobalStyles();
 
   const daytimes = daytimesData?.data;
-  const columns: ColDef[] = createColumns(daytimes ? daytimes[0] : {});
+  const columns: ColDef[] = daytimes ? createColumns(daytimes[0]) : [];
   const rows = daytimes?.map((daytime, index) => ({ id: index, ...daytime }));
+  const values = watch();
+
+  const parseOptions: Record<string, SqlParseVariableOption> = {
+    [camelcase('title')]: {
+      value: values.title,
+    },
+    [camelcase('daytime_id')]: {
+      value: selectedRow?.daytime_id,
+      int: true,
+    },
+  };
 
   React.useEffect(() => {
     if (!selectedRow) {
@@ -70,64 +86,48 @@ const Daytimes: React.FC = () => {
   };
 
   return (
-    <>
-      <Paper className={globalClasses.dataGrid}>
-        {rows && (
-          <DataGrid
-            columns={columns}
-            rows={rows}
-            onRowClick={({ data }) => setSelectedRow(data as IDaytime & { id: number })}
-          />
-        )}
-      </Paper>
-      <Paper className={globalClasses.editor}>
-        <div className={globalClasses.editorHeader}>
-          {selectedRow ? 'Edit daytime' : 'Create new daytime'}
-          {selectedRow && (
-            <IconButton
-              size="small"
-              onClick={() => setSelectedRow(null)}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          )}
-        </div>
-        <form
-          className={globalClasses.editorForm}
-          onSubmit={handleSubmit(handleSubmitClick)}
-        >
-          <TextField
-            inputRef={register({ required: true })}
+    <Layout
+      cols={columns}
+      rows={rows}
+      onRowClick={({ data }) => setSelectedRow(data as IDaytime & { id: number })}
+    >
+      <div className={globalClasses.editorHeader}>
+        {selectedRow ? 'Edit daytime' : 'Create new daytime'}
+        {selectedRow && (
+          <IconButton
             size="small"
-            name="title"
-            label="Title*"
-            variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            error={Boolean(errors.title)}
-            helperText={errors.title ? 'Field is required' : ' '}
-          />
-
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!(formState.isDirty && formState.isValid)}
+            onClick={() => setSelectedRow(null)}
           >
-            {selectedRow ? 'Edit' : 'Create'}
-          </Button>
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        )}
+      </div>
+      <form
+        className={globalClasses.editorForm}
+        onSubmit={handleSubmit(handleSubmitClick)}
+      >
+        <TextField
+          inputRef={register({ required: true })}
+          size="small"
+          name="title"
+          label="Title*"
+          variant="outlined"
+          InputLabelProps={{ shrink: true }}
+          error={Boolean(errors.title)}
+          helperText={errors.title ? 'Field is required' : ' '}
+        />
 
-          {selectedRow && (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={deleteRow}
-            >
-              Delete
-            </Button>
-          )}
-        </form>
-      </Paper>
-    </>
+        <CodeButtons
+          parseOptions={parseOptions}
+          createSql={createDaytimeSql}
+          updateSql={updateDaytimeSql}
+          deleteSql={deleteDaytimeSql}
+          selected={selectedRow}
+          disabled={!(formState.isDirty && formState.isValid)}
+          onDeleteClick={deleteRow}
+        />
+      </form>
+    </Layout>
   );
 };
 

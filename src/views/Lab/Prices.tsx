@@ -8,10 +8,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Paper,
-  Grid,
 } from '@material-ui/core';
-import { DataGrid, ColDef } from '@material-ui/data-grid';
+import { ColDef } from '@material-ui/data-grid';
 import CloseIcon from '@material-ui/icons/Close';
 import createPriceSql from '@sql/Prices/CreatePrice.sql';
 import deletePriceSql from '@sql/Prices/DeletePrice.sql';
@@ -22,8 +20,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
 import CodeButtons from '@/components/CodeButtons';
-import DataGridFab from '@/components/DataGridFab';
-import SqlCodeBlock from '@/components/SqlCodeBlock';
+import Layout from '@/components/Layout';
 import ApiServiceContext from '@/contexts/api-service.context';
 import { IPrice } from '@/interfaces/price.interface';
 import { useGlobalStyles } from '@/styles/global-styles';
@@ -42,7 +39,6 @@ const defaultValues: PriceForm = {
 const Prices: React.FC = () => {
   const apiService = React.useContext(ApiServiceContext);
   const [selectedRow, setSelectedRow] = React.useState<IPrice & { id: number } | null>(null);
-  const [isViewCodeShown, setIsViewCodeShown] = React.useState(false);
   const { register, handleSubmit, control, watch, errors, reset, formState } = useForm<PriceForm>({ defaultValues, mode: 'onChange', reValidateMode: 'onChange' });
   const { data: pricesData, refetch: refetchPrices } = useQuery('prices', apiService.priceApi.getPricesTable);
   const { data: localitiesData } = useQuery('localities', apiService.localityApi.getAllLocalities);
@@ -107,23 +103,13 @@ const Prices: React.FC = () => {
     await refetchPrices();
   };
 
-  const renderCode = () => (
-    <>
-      <div className={globalClasses.editorHeader}>
-        <div>Prices view code</div>
-        <IconButton
-          size="small"
-          onClick={() => setIsViewCodeShown(false)}
-        >
-          <CloseIcon fontSize="small" />
-        </IconButton>
-      </div>
-      <SqlCodeBlock text={pricesTableSql} />
-    </>
-  );
-
-  const renderEditor = () => (
-    <>
+  return (
+    <Layout
+      cols={columns}
+      rows={rows}
+      viewSql={pricesTableSql}
+      onRowClick={({ data }) => setSelectedRow(data as IPrice & { id: number })}
+    >
       <div className={globalClasses.editorHeader}>
         {selectedRow ? 'Edit price' : 'Create new price'}
         {selectedRow && (
@@ -197,39 +183,7 @@ const Prices: React.FC = () => {
           onDeleteClick={deleteRow}
         />
       </form>
-    </>
-  );
-
-  return (
-    <Grid
-      container
-      spacing={2}
-    >
-      <Grid
-        item
-        xs={8}
-      >
-        <Paper className={globalClasses.dataGrid}>
-          {rows && (
-            <DataGrid
-              columns={columns}
-              rows={rows}
-              onRowClick={({ data }) => setSelectedRow(data as IPrice & { id: number })}
-            />
-          )}
-
-          <DataGridFab onClick={() => setIsViewCodeShown(!isViewCodeShown)} />
-        </Paper>
-      </Grid>
-      <Grid
-        item
-        xs={4}
-      >
-        <Paper className={globalClasses.editor}>
-          { isViewCodeShown ? renderCode() : renderEditor() }
-        </Paper>
-      </Grid>
-    </Grid>
+    </Layout>
   );
 };
 
